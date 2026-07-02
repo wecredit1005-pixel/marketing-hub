@@ -77,7 +77,7 @@
                     ⚙️ Settings
                 </button>
                 <button onclick="pullFromSheet()" class="bg-white hover:bg-slate-50 text-indigo-600 border border-indigo-200 text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1">
-                    🔄 Pull Data
+                    🔄 Sync Pull
                 </button>
                 <button onclick="pushToSheet()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition shadow flex items-center gap-1">
                     📤 Push Data
@@ -413,6 +413,12 @@
 
     <script>
         // Global State Configuration
+        // =========================================================================
+        // ⚠️ CRITICAL: PASTE YOUR DEPLOYED GOOGLE APPS SCRIPT WEB APP URL HERE!
+        // This makes the board fully automatic for all team members out-of-the-box!
+        const SYSTEM_DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbwg9R-oodyzshqkFVdlvWxgNg0Q26NK447WyP7Q9nj-Pxk0RvS_QpMdPBhVwiIWNQT7/exec"; 
+        // =========================================================================
+
         let tasks = [
             { id: "1001", title: "Technical audit SEO standard SOP draft", assignee: "Vivek Vishal", channel: "SEO", subChannel: "", whatsAppType: "", priority: "high", stage: "review", lastmodified: Date.now().toString(), donetimestamp: "" },
             { id: "1002", title: "Instagram assets layout template generation", assignee: "Anchal Sharma", channel: "Graphic Design", subChannel: "", whatsAppType: "", priority: "medium", stage: "inprogress", lastmodified: Date.now().toString(), donetimestamp: "" },
@@ -430,6 +436,7 @@
         let pipelineChart = null;
         let confirmPromiseResolver = null;
         let authPromiseResolver = null;
+        let autoPullTimer = null;
 
         // Channel Color Badges
         const BADGE_THEMES = {
@@ -441,11 +448,62 @@
         };
 
         window.addEventListener('DOMContentLoaded', () => {
+            // Check if default system URL is configured and write it as default fallback
+            const savedUrl = localStorage.getItem('marketing_hub_gas_url');
+            if (!savedUrl && SYSTEM_DEFAULT_GAS_URL && !SYSTEM_DEFAULT_GAS_URL.includes("x-y-z")) {
+                localStorage.setItem('marketing_hub_gas_url', SYSTEM_DEFAULT_GAS_URL);
+                localStorage.setItem('marketing_hub_autosync', 'true');
+            }
+
             // Restore from Cache Storage
             const localTasks = localStorage.getItem('marketing_tasks_backup_v3');
             if (localTasks) {
                 try { tasks = JSON.parse(localTasks); } catch(e) { console.error("Restore mismatch, keeping defaults."); }
             }
+            
+            const localArchive = localStorage.getItem('marketing_tasks_archive_v3');
+            if (localArchive) {
+                try { archivedTasks = JSON.parse(localArchive); } catch(e) { console.error("Archive restore issue."); }
+            }
+
+            const savedPin = localStorage.getItem('marketing_hub_manager_pin');
+            if (savedPin) { managerPin = savedPin; }
+
+            // Default auto-sync to enabled if sheets URL exists
+            const hasUrlSetting = localStorage.getItem('marketing_hub_gas_url');
+            if (hasUrlSetting && localStorage.getItem('marketing_hub_autosync') === null) {
+                localStorage.setItem('marketing_hub_autosync', 'true');
+            }
+            
+            const autoSyncEnabled = localStorage.getItem('marketing_hub_autosync') !== 'false';
+            document.getElementById('autoSyncToggle').checked = autoSyncEnabled;
+
+            checkConnectionStatus();
+            initCharts();
+            runAutomatedArchiver(); // Run check instantly on load
+            renderBoard();
+
+            // AUTOMATION: Silently fetch latest cloud updates on initialization
+            if (hasUrlSetting) {
+                setTimeout(() => {
+                    pullFromSheet(true);
+                }, 500);
+            }
+
+            // AUTOMATION: Background polling interval set to every 15 seconds
+            startCloudPolling();
+        });
+
+        // Smart periodic polling
+        function startCloudPolling() {
+            if (autoPullTimer) clearInterval(autoPullTimer);
+            autoPullTimer = setInterval(() => {
+                const url = localStorage.getItem('marketing_hub_gas_url');
+                if (url && isAutoSyncActive()) {
+                    pullFromSheet(true); // Silent background merge
+                }
+            }, 15000); // 15 seconds
+        }
             
             const localArchive = localStorage.getItem('marketing_tasks_archive_v3');
             if (localArchive) {
@@ -1091,11 +1149,14 @@
                 localStorage.setItem('marketing_hub_autosync', isAutoSync ? 'true' : 'false');
                 checkConnectionStatus();
                 showToast("⚙️ Sync configurations saved!");
+                pullFromSheet(true); // Initial fetch trigger
+                startCloudPolling(); // Reset loop
             } else {
                 localStorage.removeItem('marketing_hub_gas_url');
                 localStorage.removeItem('marketing_hub_autosync');
                 checkConnectionStatus();
                 showToast("⚠️ Sync configurations cleared", "ℹ️");
+                if (autoPullTimer) clearInterval(autoPullTimer);
             }
 
             // Save new Passcode configuration ONLY if Manager is unlocked and input is loaded
@@ -1125,16 +1186,18 @@
             }
         }
 
-        // Smart Conflict Resolution Pulling Method
-        function pullFromSheet() {
+        // Smart Conflict Resolution Pulling Method (with optional silent parameter)
+        function pullFromSheet(isSilent = false) {
             const url = localStorage.getItem('marketing_hub_gas_url');
             if (!url) {
-                showToast("Configure your Google Sheet URL first!", "⚠️");
-                openSyncModal();
+                if (!isSilent) {
+                    showToast("Configure your Google Sheet URL first!", "⚠️");
+                    openSyncModal();
+                }
                 return;
             }
 
-            showToast("🔄 Smart pulling and resolving updates...", "⏳");
+            if (!isSilent) { showToast("🔄 Fetching latest updates...", "⏳"); }
             
             fetch(url)
                 .then(response => {
@@ -1161,13 +1224,14 @@
                             donetimestamp: t.donetimestamp ? t.donetimestamp.toString() : ""
                         }));
 
-                        // Perform Smart Merge based on lastmodified time stamps
+                        // Perform Smart Merge based on lastmodified timestamps
                         const mergedMap = new Map();
                         
                         // Push local state items
                         tasks.forEach(lt => mergedMap.set(lt.id, lt));
 
                         // Compare with cloud tasks
+                        let hasChanges = false;
                         normalizedCloud.forEach(ct => {
                             // If task was deleted locally, ignore cloud record
                             if (deletedTaskIds.includes(ct.id)) {
@@ -1177,32 +1241,31 @@
                             if (!mergedMap.has(ct.id)) {
                                 // Task only exists on cloud, pull it in
                                 mergedMap.set(ct.id, ct);
+                                hasChanges = true;
                             } else {
                                 // Conflict Resolve: Compare LastModified Timestamps
                                 const localTime = parseInt(mergedMap.get(ct.id).lastmodified) || 0;
                                 const cloudTime = parseInt(ct.lastmodified) || 0;
                                 if (cloudTime > localTime) {
                                     mergedMap.set(ct.id, ct);
+                                    hasChanges = true;
                                 }
                             }
                         });
 
-                        tasks = Array.from(mergedMap.values());
-                        
-                        // Clear deleted ledger if pull state resolves fully
-                        deletedTaskIds = [];
-                        localStorage.setItem('marketing_tasks_deleted_log', JSON.stringify([]));
-
-                        runAutomatedArchiver(); // Run check in case newly pulled tasks should be instantly archived
-                        renderBoard();
-                        showToast("☁️ Merge Sync completed successfully!");
-                    } else {
-                        showToast("Empty data ledger on cloud", "⚠️");
+                        if (hasChanges || tasks.length !== mergedMap.size) {
+                            tasks = Array.from(mergedMap.values());
+                            runAutomatedArchiver();
+                            renderBoard();
+                            if (!isSilent) showToast("☁️ Merge Sync completed successfully!");
+                        }
                     }
                 })
                 .catch(err => {
-                    console.error(err);
-                    showToast("Sync bridge connection failure.", "❌");
+                    console.error("Polling error:", err);
+                    if (!isSilent) {
+                        showToast("Sync bridge connection failure.", "❌");
+                    }
                 });
         }
 
