@@ -280,9 +280,9 @@
                     </label>
                 </div>
 
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Manager Security Passcode</label>
-                    <input type="password" id="managerPinConfig" placeholder="Enter new numerical PIN" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                <!-- Passcode config block (Only editable when inside Manager Mode) -->
+                <div id="passcode-config-wrapper" class="p-3 bg-amber-50 border border-amber-100 rounded-xl">
+                    <!-- Text warning loaded here if locked, or password input if unlocked -->
                 </div>
 
                 <div class="pt-2 flex gap-2">
@@ -344,17 +344,39 @@
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Channel</label>
-                        <select id="taskChannel" onchange="toggleCustomChannelInput()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
-                            <option>Social Media</option>
-                            <option>Graphic Design</option>
-                            <option>Content/Copywriting</option>
-                            <option>Campaigns/Ads</option>
-                            <option>SEO</option>
+                        <select id="taskChannel" onchange="handleChannelSelectionChange()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                            <option value="Social Media">Social Media</option>
+                            <option value="Graphic Design">Graphic Design</option>
+                            <option value="Content Writing">Content Writing</option>
+                            <option value="Campaigns">Campaigns</option>
+                            <option value="SEO">SEO</option>
                             <option value="Other">Other</option>
                         </select>
                     </div>
                 </div>
 
+                <!-- Nested Sub-Channel Selector (For Campaigns and Content Writing) -->
+                <div id="subChannelWrapper" class="hidden">
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Sub-Channel Option</label>
+                    <select id="taskSubChannel" onchange="handleSubChannelSelectionChange()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                        <option value="">-- Choose Sub-Channel --</option>
+                        <option value="SMS">SMS</option>
+                        <option value="RCS">RCS</option>
+                        <option value="IVR">IVR</option>
+                        <option value="WhatsApp">WhatsApp</option>
+                    </select>
+                </div>
+
+                <!-- WhatsApp Type Selector (Conditional to WhatsApp selection) -->
+                <div id="whatsAppTypeWrapper" class="hidden">
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">WhatsApp Stream Type</label>
+                    <select id="taskWhatsAppType" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                        <option value="WhatsApp Utility">WhatsApp Utility</option>
+                        <option value="WhatsApp Marketing">WhatsApp Marketing</option>
+                    </select>
+                </div>
+
+                <!-- Custom Channel Name Input -->
                 <div id="customChannelWrapper" class="hidden">
                     <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Custom Channel Name</label>
                     <input type="text" id="customChannelInput" placeholder="e.g. Email Marketing" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
@@ -392,11 +414,11 @@
     <script>
         // Global State Configuration
         let tasks = [
-            { id: "1001", title: "Technical audit SEO standard SOP draft", assignee: "Vivek Vishal", channel: "SEO", priority: "high", stage: "review", lastmodified: Date.now().toString(), donetimestamp: "" },
-            { id: "1002", title: "Instagram assets layout template generation", assignee: "Anchal Sharma", channel: "Graphic Design", priority: "medium", stage: "inprogress", lastmodified: Date.now().toString(), donetimestamp: "" },
-            { id: "1003", title: "Draft copywriting outline for product newsletter", assignee: "Ankit Kumar", channel: "Content/Copywriting", priority: "medium", stage: "upnext", lastmodified: Date.now().toString(), donetimestamp: "" },
-            { id: "1004", title: "Deploy FB programmatic audience filters", assignee: "Tushar Kumar", channel: "Campaigns/Ads", priority: "high", stage: "inprogress", lastmodified: Date.now().toString(), donetimestamp: "" },
-            { id: "1005", title: "Schedule social media calendar posts for July", assignee: "Riya Mishra", channel: "Social Media", priority: "low", stage: "backlog", lastmodified: Date.now().toString(), donetimestamp: "" }
+            { id: "1001", title: "Technical audit SEO standard SOP draft", assignee: "Vivek Vishal", channel: "SEO", subChannel: "", whatsAppType: "", priority: "high", stage: "review", lastmodified: Date.now().toString(), donetimestamp: "" },
+            { id: "1002", title: "Instagram assets layout template generation", assignee: "Anchal Sharma", channel: "Graphic Design", subChannel: "", whatsAppType: "", priority: "medium", stage: "inprogress", lastmodified: Date.now().toString(), donetimestamp: "" },
+            { id: "1003", title: "Draft copywriting outline for product newsletter", assignee: "Ankit Kumar", channel: "Content Writing", subChannel: "SMS", whatsAppType: "", priority: "medium", stage: "upnext", lastmodified: Date.now().toString(), donetimestamp: "" },
+            { id: "1004", title: "Deploy FB programmatic audience filters", assignee: "Tushar Kumar", channel: "Campaigns", subChannel: "WhatsApp", whatsAppType: "WhatsApp Marketing", priority: "high", stage: "inprogress", lastmodified: Date.now().toString(), donetimestamp: "" },
+            { id: "1005", title: "Schedule social media calendar posts for July", assignee: "Riya Mishra", channel: "Social Media", subChannel: "", whatsAppType: "", priority: "low", stage: "backlog", lastmodified: Date.now().toString(), donetimestamp: "" }
         ];
 
         let archivedTasks = [];
@@ -413,19 +435,19 @@
         const BADGE_THEMES = {
             "Social Media": "bg-pink-50 border-pink-200 text-pink-700",
             "Graphic Design": "bg-purple-50 border-purple-200 text-purple-700",
-            "Content/Copywriting": "bg-blue-50 border-blue-200 text-blue-700",
-            "Campaigns/Ads": "bg-amber-50 border-amber-200 text-amber-700",
+            "Content Writing": "bg-blue-50 border-blue-200 text-blue-700",
+            "Campaigns": "bg-amber-50 border-amber-200 text-amber-700",
             "SEO": "bg-emerald-50 border-emerald-200 text-emerald-700"
         };
 
         window.addEventListener('DOMContentLoaded', () => {
             // Restore from Cache Storage
-            const localTasks = localStorage.getItem('marketing_tasks_backup_v2');
+            const localTasks = localStorage.getItem('marketing_tasks_backup_v3');
             if (localTasks) {
                 try { tasks = JSON.parse(localTasks); } catch(e) { console.error("Restore mismatch, keeping defaults."); }
             }
             
-            const localArchive = localStorage.getItem('marketing_tasks_archive_v2');
+            const localArchive = localStorage.getItem('marketing_tasks_archive_v3');
             if (localArchive) {
                 try { archivedTasks = JSON.parse(localArchive); } catch(e) { console.error("Archive restore issue."); }
             }
@@ -464,8 +486,8 @@
             });
 
             if (madeArchiveChanges) {
-                localStorage.setItem('marketing_tasks_backup_v2', JSON.stringify(tasks));
-                localStorage.setItem('marketing_tasks_archive_v2', JSON.stringify(archivedTasks));
+                localStorage.setItem('marketing_tasks_backup_v3', JSON.stringify(tasks));
+                localStorage.setItem('marketing_tasks_archive_v3', JSON.stringify(archivedTasks));
                 showToast("📦 Tasks in Done longer than 12 hours archived successfully", "📦");
                 if (isAutoSyncActive()) {
                     pushToSheet(true); // Silent push background sync
@@ -593,9 +615,8 @@
 
                 filtered.forEach(task => {
                     const card = document.createElement('div');
-                    card.className = "bg-white p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:shadow-md transition duration-150 cursor-grab active:cursor-grabbing relative group shadow-sm";
+                    card.className = "bg-white p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:shadow-md transition duration-150 cursor-grab active:cursor-grabbing relative group shadow-sm animate-in fade-in zoom-in-95 duration-150";
                     
-                    // Conditionally lock dragging for done column, or dragging from review to done if not manager
                     card.draggable = true;
                     card.id = `task-${task.id}`;
                     card.ondragstart = drag;
@@ -604,11 +625,21 @@
                     const badgeTheme = BADGE_THEMES[task.channel] || 'bg-slate-50 border-slate-200 text-slate-600 border';
                     const priorityDot = task.priority === 'high' ? 'bg-red-500' : task.priority === 'medium' ? 'bg-amber-400' : 'bg-emerald-400';
 
+                    // Formulate Channel Label Tag based on nested setup
+                    let displayChannel = task.channel;
+                    if (task.subChannel) {
+                        if (task.subChannel === 'WhatsApp' && task.whatsAppType) {
+                            displayChannel += ` > ${task.whatsAppType}`;
+                        } else {
+                            displayChannel += ` > ${task.subChannel}`;
+                        }
+                    }
+
                     card.innerHTML = `
                         <div class="space-y-3">
                             <div class="flex items-center justify-between">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-semibold tracking-wider ${badgeTheme}">${task.channel}</span>
-                                <div class="flex items-center gap-1.5">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-semibold tracking-wider truncate max-w-[130px] ${badgeTheme}" title="${displayChannel}">${displayChannel}</span>
+                                <div class="flex items-center gap-1.5 shrink-0">
                                     <span class="w-2 h-2 rounded-full ${priorityDot}"></span>
                                     <span class="text-[9px] font-bold uppercase text-slate-400">${task.priority}</span>
                                 </div>
@@ -641,7 +672,7 @@
             }
 
             // Sync with memory
-            localStorage.setItem('marketing_tasks_backup_v2', JSON.stringify(tasks));
+            localStorage.setItem('marketing_tasks_backup_v3', JSON.stringify(tasks));
             updateCharts();
         }
 
@@ -718,16 +749,41 @@
         }
 
         // Settings / Custom Modal Controllers
-        function toggleCustomChannelInput() {
-            const channelSelect = document.getElementById('taskChannel');
+        function handleChannelSelectionChange() {
+            const channel = document.getElementById('taskChannel').value;
             const customWrapper = document.getElementById('customChannelWrapper');
-            const customInput = document.getElementById('customChannelInput');
-            if (channelSelect.value === 'Other') {
+            const subChannelWrapper = document.getElementById('subChannelWrapper');
+            const whatsAppTypeWrapper = document.getElementById('whatsAppTypeWrapper');
+
+            // Reset visibilities
+            customWrapper.classList.add('hidden');
+            subChannelWrapper.classList.add('hidden');
+            whatsAppTypeWrapper.classList.add('hidden');
+
+            document.getElementById('customChannelInput').required = false;
+            document.getElementById('taskSubChannel').required = false;
+            document.getElementById('taskWhatsAppType').required = false;
+
+            if (channel === 'Other') {
                 customWrapper.classList.remove('hidden');
-                customInput.required = true;
+                document.getElementById('customChannelInput').required = true;
+            } else if (channel === 'Campaigns' || channel === 'Content Writing') {
+                subChannelWrapper.classList.remove('hidden');
+                document.getElementById('taskSubChannel').required = true;
+                handleSubChannelSelectionChange();
+            }
+        }
+
+        function handleSubChannelSelectionChange() {
+            const subChannel = document.getElementById('taskSubChannel').value;
+            const whatsAppTypeWrapper = document.getElementById('whatsAppTypeWrapper');
+
+            if (subChannel === 'WhatsApp') {
+                whatsAppTypeWrapper.classList.remove('hidden');
+                document.getElementById('taskWhatsAppType').required = true;
             } else {
-                customWrapper.classList.add('hidden');
-                customInput.required = false;
+                whatsAppTypeWrapper.classList.add('hidden');
+                document.getElementById('taskWhatsAppType').required = false;
             }
         }
 
@@ -735,10 +791,10 @@
             document.getElementById('modalTitle').innerText = "Create New Task";
             document.getElementById('taskForm').reset();
             document.getElementById('taskId').value = '';
-            document.getElementById('customChannelWrapper').classList.add('hidden');
-            document.getElementById('customChannelInput').value = '';
-            document.getElementById('customChannelInput').required = false;
             
+            // Re-trigger hidden states resets
+            handleChannelSelectionChange();
+
             // Limit Done selection option unless unlocked
             document.getElementById('stage-done-option').disabled = !isManagerUnlocked;
 
@@ -761,17 +817,25 @@
             document.getElementById('taskTitle').value = task.title;
             document.getElementById('taskAssignee').value = task.assignee;
             
-            const defaultChannels = ["Social Media", "Graphic Design", "Content/Copywriting", "Campaigns/Ads", "SEO"];
+            const defaultChannels = ["Social Media", "Graphic Design", "Content Writing", "Campaigns", "SEO"];
             if (defaultChannels.includes(task.channel)) {
                 document.getElementById('taskChannel').value = task.channel;
-                document.getElementById('customChannelWrapper').classList.add('hidden');
-                document.getElementById('customChannelInput').value = '';
-                document.getElementById('customChannelInput').required = false;
             } else {
                 document.getElementById('taskChannel').value = "Other";
-                document.getElementById('customChannelWrapper').classList.remove('hidden');
+            }
+
+            // Sync dynamic wrappers values
+            handleChannelSelectionChange();
+
+            if (task.channel === 'Campaigns' || task.channel === 'Content Writing') {
+                document.getElementById('taskSubChannel').value = task.subChannel || "";
+                handleSubChannelSelectionChange();
+                
+                if (task.subChannel === 'WhatsApp') {
+                    document.getElementById('taskWhatsAppType').value = task.whatsAppType || "WhatsApp Utility";
+                }
+            } else if (document.getElementById('taskChannel').value === 'Other') {
                 document.getElementById('customChannelInput').value = task.channel;
-                document.getElementById('customChannelInput').required = true;
             }
 
             document.getElementById('taskPriority').value = task.priority;
@@ -794,8 +858,16 @@
             const assignee = document.getElementById('taskAssignee').value;
             
             let channel = document.getElementById('taskChannel').value;
+            let subChannel = "";
+            let whatsAppType = "";
+
             if (channel === 'Other') {
                 channel = document.getElementById('customChannelInput').value.trim() || 'Other';
+            } else if (channel === 'Campaigns' || channel === 'Content Writing') {
+                subChannel = document.getElementById('taskSubChannel').value;
+                if (subChannel === 'WhatsApp') {
+                    whatsAppType = document.getElementById('taskWhatsAppType').value;
+                }
             }
 
             const priority = document.getElementById('taskPriority').value;
@@ -814,7 +886,7 @@
                     const doneStamp = (stage === 'done') ? (originalStage === 'done' ? tasks[idx].donetimestamp : Date.now().toString()) : "";
 
                     tasks[idx] = { 
-                        id, title, assignee, channel, priority, stage, 
+                        id, title, assignee, channel, subChannel, whatsAppType, priority, stage, 
                         lastmodified: Date.now().toString(),
                         donetimestamp: doneStamp 
                     };
@@ -824,7 +896,7 @@
                 // Creating new
                 const newTask = {
                     id: Date.now().toString(),
-                    title, assignee, channel, priority, stage,
+                    title, assignee, channel, subChannel, whatsAppType, priority, stage,
                     lastmodified: Date.now().toString(),
                     donetimestamp: (stage === 'done') ? Date.now().toString() : ""
                 };
@@ -922,14 +994,20 @@
 
             archivedTasks.forEach((task, idx) => {
                 const archiveCard = document.createElement('div');
-                archiveCard.className = "p-4 rounded-xl border border-slate-200 bg-slate-50 flex justify-between items-center";
+                archiveCard.className = "p-4 rounded-xl border border-slate-200 bg-slate-50 flex justify-between items-center animate-in fade-in zoom-in-95 duration-150";
                 
                 const archiveDateStr = task.archivedAt ? new Date(task.archivedAt).toLocaleString() : 'N/A';
+
+                let displayChan = task.channel;
+                if (task.subChannel) {
+                    displayChan += ` > ${task.subChannel}`;
+                    if (task.whatsAppType) displayChan += ` (${task.whatsAppType})`;
+                }
 
                 archiveCard.innerHTML = `
                     <div class="space-y-1">
                         <div class="flex items-center gap-2">
-                            <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-slate-200 text-slate-600">${task.channel}</span>
+                            <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-slate-200 text-slate-600">${displayChan}</span>
                             <span class="text-[9px] text-slate-400 font-semibold">Archived: ${archiveDateStr}</span>
                         </div>
                         <h4 class="text-xs font-bold text-slate-800">${task.title}</h4>
@@ -957,8 +1035,8 @@
             tasks.push(restoredTask);
             archivedTasks.splice(idx, 1);
 
-            localStorage.setItem('marketing_tasks_backup_v2', JSON.stringify(tasks));
-            localStorage.setItem('marketing_tasks_archive_v2', JSON.stringify(archivedTasks));
+            localStorage.setItem('marketing_tasks_backup_v3', JSON.stringify(tasks));
+            localStorage.setItem('marketing_tasks_archive_v3', JSON.stringify(archivedTasks));
 
             renderBoard();
             renderArchiveList();
@@ -972,9 +1050,27 @@
         function openSyncModal() {
             const savedUrl = localStorage.getItem('marketing_hub_gas_url') || '';
             document.getElementById('sheetUrlInput').value = savedUrl;
+            
+            // Build Passcode settings input based on current authorization role
+            const passcodeContainer = document.getElementById('passcode-config-wrapper');
+            if (isManagerUnlocked) {
+                passcodeContainer.innerHTML = `
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">🔑 Manager Security Passcode</label>
+                    <input type="password" id="managerPinConfig" value="${managerPin}" placeholder="Enter new numerical PIN" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                    <p class="text-[10px] text-slate-400 mt-1">Authorized. Type a new passcode to update.</p>
+                `;
+            } else {
+                passcodeContainer.innerHTML = `
+                    <div class="flex items-center gap-2 text-amber-700">
+                        <span class="text-sm">🔒</span>
+                        <span class="text-xs font-semibold">Security Settings Locked</span>
+                    </div>
+                    <p class="text-[10px] text-amber-600 mt-1">Passcode configurations are hidden. You must unlock <strong>Manager Mode</strong> from the main toolbar to alter security PINs.</p>
+                `;
+            }
+
             document.getElementById('syncSettingsModal').classList.remove('hidden');
             document.getElementById('syncSettingsModal').classList.add('flex');
-            document.getElementById('managerPinConfig').value = managerPin;
         }
 
         function closeSyncModal() {
@@ -988,7 +1084,6 @@
 
         function saveSyncSettings() {
             const url = document.getElementById('sheetUrlInput').value.trim();
-            const configPin = document.getElementById('managerPinConfig').value.trim();
             const isAutoSync = document.getElementById('autoSyncToggle').checked;
 
             if (url) {
@@ -1003,9 +1098,14 @@
                 showToast("⚠️ Sync configurations cleared", "ℹ️");
             }
 
-            if (configPin) {
-                managerPin = configPin;
-                localStorage.setItem('marketing_hub_manager_pin', configPin);
+            // Save new Passcode configuration ONLY if Manager is unlocked and input is loaded
+            const configPinInput = document.getElementById('managerPinConfig');
+            if (isManagerUnlocked && configPinInput) {
+                const configPin = configPinInput.value.trim();
+                if (configPin) {
+                    managerPin = configPin;
+                    localStorage.setItem('marketing_hub_manager_pin', configPin);
+                }
             }
 
             closeSyncModal();
@@ -1053,6 +1153,8 @@
                             title: t.title || 'Untitled Task',
                             assignee: t.assignee || 'Unassigned',
                             channel: t.channel || 'General',
+                            subChannel: t.subchannel || '',
+                            whatsAppType: t.whatsapptype || '',
                             priority: t.priority ? t.priority.toLowerCase() : 'medium',
                             stage: t.stage ? t.stage.toLowerCase() : 'backlog',
                             lastmodified: t.lastmodified ? t.lastmodified.toString() : "0",
