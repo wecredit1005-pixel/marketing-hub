@@ -86,31 +86,24 @@
     <!-- Main Workspace Container -->
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
         
-        <!-- Notice Period and Team Alert Banner -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            <div class="lg:col-span-8 bg-amber-50 border border-amber-200 rounded-xl p-4 transition-alert flex gap-3 items-start">
-                <div class="text-2xl pt-0.5">⚠️</div>
-                <div class="text-sm">
-                    <h4 class="font-bold text-amber-900 mb-0.5">Critical Team Offboarding Warning</h4>
-                    <p class="text-amber-800 leading-relaxed">
-                        <strong>Vivek Vishal (SEO)</strong> is currently serving his notice period. Prioritize tasks focused on writing or reviewing standard operating procedures (SOPs) for Technical Audits, Keyword Mapping, and On-Page Checklists. Assignees should shadow him now to guarantee operational continuity.
-                    </p>
+        <!-- Filter & Actions Bar -->
+        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">🎯</span>
+                <div>
+                    <h4 class="text-sm font-bold text-slate-950">Team Workload Tracker</h4>
+                    <p class="text-xs text-slate-500">Filter tasks and monitor ongoing team capacity live.</p>
                 </div>
             </div>
-            
-            <div class="lg:col-span-4 bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col justify-between">
-                <div>
-                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Quick Filter</h4>
-                    <p class="text-xs text-slate-500 mb-2">Isolate assignments by marketing specialist.</p>
-                </div>
+            <div class="w-full sm:w-64">
                 <select id="memberFilter" onchange="renderBoard()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
                     <option value="All">All Team Members</option>
-                    <option value="Riya Mishra">Riya Mishra (Social Media)</option>
-                    <option value="Anchal Sharma">Anchal Sharma (Graphics)</option>
-                    <option value="Ankit Kumar">Ankit Kumar (Content)</option>
-                    <option value="Ritu Chola">Ritu Chola (Content)</option>
-                    <option value="Tushar Kumar">Tushar Kumar (Campaigns)</option>
-                    <option value="Vivek Vishal">Vivek Vishal (SEO - Notice Period)</option>
+                    <option value="Riya Mishra">Riya Mishra</option>
+                    <option value="Anchal Sharma">Anchal Sharma</option>
+                    <option value="Ankit Kumar">Ankit Kumar</option>
+                    <option value="Ritu Chola">Ritu Chola</option>
+                    <option value="Tushar Kumar">Tushar Kumar</option>
+                    <option value="Vivek Vishal">Vivek Vishal</option>
                 </select>
             </div>
         </div>
@@ -437,15 +430,11 @@
                     card.ondragstart = drag;
                     card.onclick = () => openEditTask(task.id);
 
-                    // Custom Visual Markers for Transition Offboarding Check
-                    const isNotice = task.assignee === "Vivek Vishal";
-                    const bannerClasses = isNotice ? "border-l-4 border-l-amber-500 pl-3 bg-gradient-to-r from-amber-50/40 to-white" : "";
-
                     const badgeTheme = BADGE_THEMES[task.channel] || 'bg-slate-100 text-slate-700';
                     const priorityDot = task.priority === 'high' ? 'bg-red-500' : task.priority === 'medium' ? 'bg-amber-400' : 'bg-emerald-400';
 
                     card.innerHTML = `
-                        <div class="space-y-3 ${bannerClasses}">
+                        <div class="space-y-3">
                             <div class="flex items-center justify-between">
                                 <span class="px-2 py-0.5 rounded text-[10px] font-semibold tracking-wider ${badgeTheme}">${task.channel}</span>
                                 <div class="flex items-center gap-1.5">
