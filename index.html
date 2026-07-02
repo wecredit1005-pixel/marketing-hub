@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Ops Hub & Kanban</title>
+    <!-- Tailwind CSS for modern utility-first styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for real-time workload and velocity visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .kanban-column {
+            min-height: 550px;
+            transition: all 0.2s ease-in-out;
+        }
+        .drag-over {
+            background-color: #f1f5f9;
+            border: 2.5px dashed #6366f1;
+            transform: scale(1.01);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 180px;
+        }
+        @keyframes pulse-subtle {
+            0%, 100% { border-color: #fcd34d; box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.2); }
+            50% { border-color: #f59e0b; box-shadow: 0 0 12px 4px rgba(245, 158, 11, 0.4); }
+        }
+        .transition-alert {
+            animation: pulse-subtle 4s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col overflow-x-hidden text-slate-800">
+
+    <!-- Top Header Navigation -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 py-3 px-6 shadow-sm">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md shadow-indigo-100">M</div>
+                <div>
+                    <h1 class="text-md font-bold text-slate-900 leading-none">Marketing Ops Hub</h1>
+                    <p class="text-[11px] text-slate-500 font-medium">Team Workflow & Cloud Sheet Sync</p>
+                </div>
+            </div>
+            
+            <!-- Operational Sync Toolbar -->
+            <div class="flex flex-wrap items-center gap-2">
+                <!-- Status indicator -->
+                <div id="sync-status" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-600">
+                    <span class="w-2.5 h-2.5 rounded-full bg-slate-400 block" id="sync-indicator-dot"></span>
+                    <span id="sync-status-text">Disconnected</span>
+                </div>
+                <!-- Action Buttons -->
+                <button onclick="openSyncModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1 border border-slate-200">
+                    ⚙️ Settings
+                </button>
+                <button onclick="pullFromSheet()" class="bg-white hover:bg-slate-50 text-indigo-600 border border-indigo-200 text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1">
+                    🔄 Pull Data
+                </button>
+                <button onclick="pushToSheet()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition shadow flex items-center gap-1">
+                    📤 Push Data
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Workspace Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+        
+        <!-- Notice Period and Team Alert Banner -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            <div class="lg:col-span-8 bg-amber-50 border border-amber-200 rounded-xl p-4 transition-alert flex gap-3 items-start">
+                <div class="text-2xl pt-0.5">⚠️</div>
+                <div class="text-sm">
+                    <h4 class="font-bold text-amber-900 mb-0.5">Critical Team Offboarding Warning</h4>
+                    <p class="text-amber-800 leading-relaxed">
+                        <strong>Vivek Vishal (SEO)</strong> is currently serving his notice period. Prioritize tasks focused on writing or reviewing standard operating procedures (SOPs) for Technical Audits, Keyword Mapping, and On-Page Checklists. Assignees should shadow him now to guarantee operational continuity.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="lg:col-span-4 bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col justify-between">
+                <div>
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Quick Filter</h4>
+                    <p class="text-xs text-slate-500 mb-2">Isolate assignments by marketing specialist.</p>
+                </div>
+                <select id="memberFilter" onchange="renderBoard()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                    <option value="All">All Team Members</option>
+                    <option value="Riya Mishra">Riya Mishra (Social Media)</option>
+                    <option value="Anchal Sharma">Anchal Sharma (Graphics)</option>
+                    <option value="Ankit Kumar">Ankit Kumar (Content)</option>
+                    <option value="Ritu Chola">Ritu Chola (Content)</option>
+                    <option value="Tushar Kumar">Tushar Kumar (Campaigns)</option>
+                    <option value="Vivek Vishal">Vivek Vishal (SEO - Notice Period)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Visual Dashboard (Analyzes Workload Capacity and Bottlenecks) -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Active Workload (Not Results) to prevent overallocation -->
+            <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                <div class="mb-3">
+                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Active Task Allocation</h3>
+                    <p class="text-[11px] text-slate-400">Shows current task counts (excluding completed ones) to identify who is overloaded.</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="workloadChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Operational Pipeline Health -->
+            <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                <div class="mb-3">
+                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Pipeline Velocity</h3>
+                    <p class="text-[11px] text-slate-400">Helps track workflow bottlenecks (especially the "Review" stage).</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="pipelineChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Kanban Interactive Grid -->
+        <section class="space-y-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Task Management Board</h2>
+                    <p class="text-xs text-slate-500">Drag & drop tasks across stages to organize. Double-click or click to modify details.</p>
+                </div>
+                <button onclick="openTaskModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition flex items-center gap-1 shadow-md shadow-indigo-100">
+                    ➕ Create Task
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 overflow-x-auto pb-4 custom-scrollbar">
+                
+                <!-- Backlog -->
+                <div class="bg-slate-100 rounded-xl p-3 border border-slate-200 flex flex-col min-w-[220px]">
+                    <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
+                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+                            💡 Backlog
+                        </span>
+                        <span id="count-backlog" class="bg-slate-200 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
+                    </div>
+                    <div id="col-backlog" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'backlog')" class="kanban-column space-y-3 flex-grow rounded-lg p-1"></div>
+                </div>
+
+                <!-- Up Next -->
+                <div class="bg-slate-100 rounded-xl p-3 border border-slate-200 flex flex-col min-w-[220px]">
+                    <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
+                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+                            🎯 Up Next
+                        </span>
+                        <span id="count-upnext" class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
+                    </div>
+                    <div id="col-upnext" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'upnext')" class="kanban-column space-y-3 flex-grow rounded-lg p-1"></div>
+                </div>
+
+                <!-- In Progress -->
+                <div class="bg-slate-100 rounded-xl p-3 border border-slate-200 flex flex-col min-w-[220px]">
+                    <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
+                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+                            ⚡ In Progress
+                        </span>
+                        <span id="count-inprogress" class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
+                    </div>
+                    <div id="col-inprogress" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'inprogress')" class="kanban-column space-y-3 flex-grow rounded-lg p-1"></div>
+                </div>
+
+                <!-- Review / Approval -->
+                <div class="bg-slate-100 rounded-xl p-3 border border-slate-200 flex flex-col min-w-[220px]">
+                    <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
+                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+                            👀 Review
+                        </span>
+                        <span id="count-review" class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
+                    </div>
+                    <div id="col-review" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'review')" class="kanban-column space-y-3 flex-grow rounded-lg p-1"></div>
+                </div>
+
+                <!-- Live / Done -->
+                <div class="bg-slate-100 rounded-xl p-3 border border-slate-200 flex flex-col min-w-[220px]">
+                    <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
+                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+                            ✅ Done
+                        </span>
+                        <span id="count-done" class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
+                    </div>
+                    <div id="col-done" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'done')" class="kanban-column space-y-3 flex-grow rounded-lg p-1"></div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Custom Dialog Elements (Avoiding Native Window Alert/Confirm) -->
+    
+    <!-- Custom Confirm Modal -->
+    <div id="customConfirmModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
+            <h4 class="text-md font-bold text-slate-900" id="confirmTitle">Are you sure?</h4>
+            <p class="text-xs text-slate-500" id="confirmText">This action cannot be undone.</p>
+            <div class="flex gap-2 justify-end">
+                <button onclick="closeConfirmModal(false)" class="px-4 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg text-xs font-semibold">Cancel</button>
+                <button onclick="closeConfirmModal(true)" class="px-4 py-2 bg-red-600 text-white hover:bg-red-700 rounded-lg text-xs font-semibold">Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toastNotification" class="fixed bottom-6 right-6 z-[120] transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div id="toastContent" class="bg-slate-900 text-white px-5 py-3.5 rounded-xl shadow-lg text-xs font-medium flex items-center gap-2.5 max-w-sm">
+            <span id="toastIcon">✨</span>
+            <span id="toastMessage">Success</span>
+        </div>
+    </div>
+
+    <!-- Sync Settings Modal -->
+    <div id="syncSettingsModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-xl w-full max-w-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="text-sm font-bold text-slate-900">Google Sheet Sync Settings</h3>
+                <button onclick="closeSyncModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Apps Script Web App URL</label>
+                    <input type="url" id="sheetUrlInput" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                    <p class="text-[10px] text-slate-400 mt-1.5 leading-relaxed">
+                        To fetch this URL, navigate to your Google Sheet -> Apps Script, paste the deployed API Bridge code, and select "Deploy" -> "New Deployment" -> "Web App". Set access parameter to "Anyone".
+                    </p>
+                </div>
+                <div class="pt-2 flex gap-2">
+                    <button onclick="closeSyncModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-lg text-xs transition">Cancel</button>
+                    <button onclick="saveSyncSettings()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg text-xs transition shadow">Save Configuration</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Creation/Editing Modal -->
+    <div id="taskModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-xl w-full max-w-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 id="modalTitle" class="text-sm font-bold text-slate-900">Create New Task</h3>
+                <button onclick="closeTaskModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+            </div>
+            <form id="taskForm" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4">
+                <input type="hidden" id="taskId">
+                
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Task Summary / Action Title</label>
+                    <input type="text" id="taskTitle" required placeholder="e.g. Map SEO Redirect SOP Checklist" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Assignee</label>
+                        <select id="taskAssignee" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                            <option>Riya Mishra</option>
+                            <option>Anchal Sharma</option>
+                            <option>Ankit Kumar</option>
+                            <option>Ritu Chola</option>
+                            <option>Tushar Kumar</option>
+                            <option>Vivek Vishal</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Channel</label>
+                        <select id="taskChannel" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                            <option>Social Media</option>
+                            <option>Graphic Design</option>
+                            <option>Content/Copywriting</option>
+                            <option>Campaigns/Ads</option>
+                            <option>SEO</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Priority Range</label>
+                        <select id="taskPriority" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                            <option value="low">Low Priority</option>
+                            <option value="medium" selected>Medium Priority</option>
+                            <option value="high">High Priority</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Operational Stage</label>
+                        <select id="taskStage" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                            <option value="backlog">Backlog</option>
+                            <option value="upnext">Up Next</option>
+                            <option value="inprogress">In Progress</option>
+                            <option value="review">Review</option>
+                            <option value="done">Done</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex gap-2">
+                    <button type="button" onclick="closeTaskModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-lg text-xs transition">Cancel</button>
+                    <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg text-xs transition shadow">Save Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Global State
+        let tasks = [
+            { id: "1001", title: "Technical audit SEO standard SOP draft", assignee: "Vivek Vishal", channel: "SEO", priority: "high", stage: "review" },
+            { id: "1002", title: "Instagram assets layout template generation", assignee: "Anchal Sharma", channel: "Graphic Design", priority: "medium", stage: "inprogress" },
+            { id: "1003", title: "Draft copywriting outline for product newsletter", assignee: "Ankit Kumar", channel: "Content/Copywriting", priority: "medium", stage: "upnext" },
+            { id: "1004", title: "Deploy FB programmatic audience filters", assignee: "Tushar Kumar", channel: "Campaigns/Ads", priority: "high", stage: "inprogress" },
+            { id: "1005", title: "Schedule social media calendar posts for July", assignee: "Riya Mishra", channel: "Social Media", priority: "low", stage: "backlog" }
+        ];
+
+        let workloadChart = null;
+        let pipelineChart = null;
+        let confirmPromiseResolver = null;
+
+        // Channel Color Badges
+        const BADGE_THEMES = {
+            "Social Media": "bg-pink-50 border-pink-200 text-pink-700",
+            "Graphic Design": "bg-purple-50 border-purple-200 text-purple-700",
+            "Content/Copywriting": "bg-blue-50 border-blue-200 text-blue-700",
+            "Campaigns/Ads": "bg-amber-50 border-amber-200 text-amber-700",
+            "SEO": "bg-emerald-50 border-emerald-200 text-emerald-700"
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Load from Local Cache if present
+            const localTasks = localStorage.getItem('marketing_tasks_backup');
+            if (localTasks) {
+                try {
+                    tasks = JSON.parse(localTasks);
+                } catch(e) {
+                    console.error("Local recovery error, loading defaults.");
+                }
+            }
+            
+            checkConnectionStatus();
+            initCharts();
+            renderBoard();
+        });
+
+        // Setup Chart.js Analytics
+        function initCharts() {
+            const ctxWorkload = document.getElementById('workloadChart').getContext('2d');
+            workloadChart = new Chart(ctxWorkload, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Tasks Count (Active Only)',
+                        data: [],
+                        backgroundColor: '#6366f1',
+                        borderRadius: 6,
+                        maxBarThickness: 32
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { precision: 0, font: { size: 9 } } },
+                        x: { grid: { display: false }, ticks: { font: { size: 9 } } }
+                    }
+                }
+            });
+
+            const ctxPipeline = document.getElementById('pipelineChart').getContext('2d');
+            pipelineChart = new Chart(ctxPipeline, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Backlog', 'Up Next', 'In Progress', 'Review', 'Done'],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: ['#64748b', '#3b82f6', '#6366f1', '#f59e0b', '#10b981'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '72%',
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { boxWidth: 8, font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render Kanban board columns
+        function renderBoard() {
+            const filterValue = document.getElementById('memberFilter').value;
+            const columns = ['backlog', 'upnext', 'inprogress', 'review', 'done'];
+
+            columns.forEach(col => {
+                const colContainer = document.getElementById(`col-${col}`);
+                colContainer.innerHTML = '';
+
+                const filtered = tasks.filter(t => t.stage === col && (filterValue === 'All' || t.assignee === filterValue));
+                document.getElementById(`count-${col}`).innerText = filtered.length;
+
+                filtered.forEach(task => {
+                    const card = document.createElement('div');
+                    card.className = "bg-white p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:shadow-md transition duration-150 cursor-grab active:cursor-grabbing relative group shadow-sm";
+                    card.draggable = true;
+                    card.id = `task-${task.id}`;
+                    card.ondragstart = drag;
+                    card.onclick = () => openEditTask(task.id);
+
+                    // Custom Visual Markers for Transition Offboarding Check
+                    const isNotice = task.assignee === "Vivek Vishal";
+                    const bannerClasses = isNotice ? "border-l-4 border-l-amber-500 pl-3 bg-gradient-to-r from-amber-50/40 to-white" : "";
+
+                    const badgeTheme = BADGE_THEMES[task.channel] || 'bg-slate-100 text-slate-700';
+                    const priorityDot = task.priority === 'high' ? 'bg-red-500' : task.priority === 'medium' ? 'bg-amber-400' : 'bg-emerald-400';
+
+                    card.innerHTML = `
+                        <div class="space-y-3 ${bannerClasses}">
+                            <div class="flex items-center justify-between">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-semibold tracking-wider ${badgeTheme}">${task.channel}</span>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full ${priorityDot}"></span>
+                                    <span class="text-[9px] font-bold uppercase text-slate-400">${task.priority}</span>
+                                </div>
+                            </div>
+                            
+                            <h4 class="text-xs font-bold text-slate-900 leading-snug group-hover:text-indigo-600 transition duration-150">${task.title}</h4>
+                            
+                            <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                                <div class="flex items-center gap-1.5 min-w-0">
+                                    <div class="w-5 h-5 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-[10px] text-slate-600 shrink-0">
+                                        ${task.assignee.charAt(0)}
+                                    </div>
+                                    <span class="text-[11px] font-medium text-slate-500 truncate">${task.assignee}</span>
+                                </div>
+                                <button onclick="triggerDelete(event, '${task.id}')" class="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-red-500 rounded transition duration-150 shrink-0">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    colContainer.appendChild(card);
+                });
+            });
+
+            // Cache data locally in case session drops
+            localStorage.setItem('marketing_tasks_backup', JSON.stringify(tasks));
+            updateCharts();
+        }
+
+        function updateCharts() {
+            if (!workloadChart || !pipelineChart) return;
+
+            // 1. Calculate Active Workloads (Excluding Done tasks)
+            const members = ['Riya Mishra', 'Anchal Sharma', 'Ankit Kumar', 'Ritu Chola', 'Tushar Kumar', 'Vivek Vishal'];
+            const workloads = { 'Riya Mishra': 0, 'Anchal Sharma': 0, 'Ankit Kumar': 0, 'Ritu Chola': 0, 'Tushar Kumar': 0, 'Vivek Vishal': 0 };
+
+            tasks.forEach(t => {
+                if (t.stage !== 'done' && workloads.hasOwnProperty(t.assignee)) {
+                    workloads[t.assignee]++;
+                }
+            });
+
+            workloadChart.data.labels = Object.keys(workloads).map(name => name.split(' ')[0]); // Display just first name
+            workloadChart.data.datasets[0].data = Object.values(workloads);
+            workloadChart.update();
+
+            // 2. Calculate Pipeline Stage Velocity
+            const pipeline = { backlog: 0, upnext: 0, inprogress: 0, review: 0, done: 0 };
+            tasks.forEach(t => {
+                if (pipeline.hasOwnProperty(t.stage)) {
+                    pipeline[t.stage]++;
+                }
+            });
+
+            pipelineChart.data.datasets[0].data = Object.values(pipeline);
+            pipelineChart.update();
+        }
+
+        // Drag and Drop Controllers
+        function allowDrop(e) { e.preventDefault(); }
+        function drag(e) { e.dataTransfer.setData("text", e.target.id); }
+        function dragEnter(e) { e.currentTarget.classList.add('drag-over'); }
+        function dragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+        
+        function drop(e, targetStage) {
+            e.preventDefault();
+            const col = e.currentTarget;
+            col.classList.remove('drag-over');
+            
+            const rawId = e.dataTransfer.getData("text");
+            const taskId = rawId.split('-')[1];
+            
+            const targetTask = tasks.find(t => t.id === taskId);
+            if (targetTask) {
+                targetTask.stage = targetStage;
+                renderBoard();
+                showToast("⚡ Task stage updated");
+            }
+        }
+
+        // Forms Controls
+        function openTaskModal() {
+            document.getElementById('modalTitle').innerText = "Create New Task";
+            document.getElementById('taskForm').reset();
+            document.getElementById('taskId').value = '';
+            document.getElementById('taskModal').classList.remove('hidden');
+            document.getElementById('taskModal').classList.add('flex');
+        }
+
+        function openEditTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+
+            document.getElementById('modalTitle').innerText = "Edit Task Details";
+            document.getElementById('taskId').value = task.id;
+            document.getElementById('taskTitle').value = task.title;
+            document.getElementById('taskAssignee').value = task.assignee;
+            document.getElementById('taskChannel').value = task.channel;
+            document.getElementById('taskPriority').value = task.priority;
+            document.getElementById('taskStage').value = task.stage;
+
+            document.getElementById('taskModal').classList.remove('hidden');
+            document.getElementById('taskModal').classList.add('flex');
+        }
+
+        function closeTaskModal() {
+            document.getElementById('taskModal').classList.add('hidden');
+            document.getElementById('taskModal').classList.remove('flex');
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('taskId').value;
+            const title = document.getElementById('taskTitle').value;
+            const assignee = document.getElementById('taskAssignee').value;
+            const channel = document.getElementById('taskChannel').value;
+            const priority = document.getElementById('taskPriority').value;
+            const stage = document.getElementById('taskStage').value;
+
+            if (id) {
+                // Editing
+                const idx = tasks.findIndex(t => t.id === id);
+                if (idx !== -1) {
+                    tasks[idx] = { id, title, assignee, channel, priority, stage };
+                    showToast("✏️ Task updated successfully");
+                }
+            } else {
+                // Creating
+                const newTask = {
+                    id: Date.now().toString(),
+                    title, assignee, channel, priority, stage
+                };
+                tasks.push(newTask);
+                showToast("🎉 New task created");
+            }
+
+            closeTaskModal();
+            renderBoard();
+        }
+
+        // Delete flow (No Window Alert/Confirm)
+        function triggerDelete(e, id) {
+            e.stopPropagation(); // Avoid opening edit modal immediately
+            showConfirmModal("Confirm Deletion", "Are you sure you want to permanently delete this task?")
+                .then(confirmed => {
+                    if (confirmed) {
+                        tasks = tasks.filter(t => t.id !== id);
+                        renderBoard();
+                        showToast("🗑️ Task has been deleted");
+                    }
+                });
+        }
+
+        // Custom Confirm Handling
+        function showConfirmModal(title, text) {
+            document.getElementById('confirmTitle').innerText = title;
+            document.getElementById('confirmText').innerText = text;
+            document.getElementById('customConfirmModal').classList.remove('hidden');
+            document.getElementById('customConfirmModal').classList.add('flex');
+            
+            return new Promise((resolve) => {
+                confirmPromiseResolver = resolve;
+            });
+        }
+
+        function closeConfirmModal(outcome) {
+            document.getElementById('customConfirmModal').classList.add('hidden');
+            document.getElementById('customConfirmModal').classList.remove('flex');
+            if (confirmPromiseResolver) {
+                confirmPromiseResolver(outcome);
+            }
+        }
+
+        // Toast Messages
+        function showToast(message, icon = "✅") {
+            const toast = document.getElementById('toastNotification');
+            document.getElementById('toastMessage').innerText = message;
+            document.getElementById('toastIcon').innerText = icon;
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3000);
+        }
+
+        // Google Sheet Apps Script Synchronizer Integration
+        function openSyncModal() {
+            const savedUrl = localStorage.getItem('marketing_hub_gas_url') || '';
+            document.getElementById('sheetUrlInput').value = savedUrl;
+            document.getElementById('syncSettingsModal').classList.remove('hidden');
+            document.getElementById('syncSettingsModal').classList.add('flex');
+        }
+
+        function closeSyncModal() {
+            document.getElementById('syncSettingsModal').classList.add('hidden');
+            document.getElementById('syncSettingsModal').classList.remove('flex');
+        }
+
+        function saveSyncSettings() {
+            const url = document.getElementById('sheetUrlInput').value.trim();
+            if (url) {
+                localStorage.setItem('marketing_hub_gas_url', url);
+                checkConnectionStatus();
+                showToast("⚙️ Sync URL configured!");
+            } else {
+                localStorage.removeItem('marketing_hub_gas_url');
+                checkConnectionStatus();
+                showToast("⚠️ Sync URL removed", "ℹ️");
+            }
+            closeSyncModal();
+        }
+
+        function checkConnectionStatus() {
+            const url = localStorage.getItem('marketing_hub_gas_url');
+            const dot = document.getElementById('sync-indicator-dot');
+            const text = document.getElementById('sync-status-text');
+
+            if (url) {
+                dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 block animate-pulse";
+                text.innerText = "Connected to Cloud";
+            } else {
+                dot.className = "w-2.5 h-2.5 rounded-full bg-amber-400 block";
+                text.innerText = "Local-Only Cache";
+            }
+        }
+
+        // Pull dataset
+        function pullFromSheet() {
+            const url = localStorage.getItem('marketing_hub_gas_url');
+            if (!url) {
+                showToast("Configure your Google Sheet URL first!", "⚠️");
+                openSyncModal();
+                return;
+            }
+
+            showToast("🔄 Fetching latest from Cloud...", "⏳");
+            
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error("Connection failed");
+                    return response.json();
+                })
+                .then(cloudTasks => {
+                    if (cloudTasks && Array.isArray(cloudTasks)) {
+                        // Normalize headers if any uppercase/lowercase mismatch occurs
+                        tasks = cloudTasks.map(t => ({
+                            id: t.id ? t.id.toString() : Date.now().toString(),
+                            title: t.title || t.name || 'Untitled Task',
+                            assignee: t.assignee || 'Unassigned',
+                            channel: t.channel || 'General',
+                            priority: t.priority ? t.priority.toLowerCase() : 'medium',
+                            stage: t.stage ? t.stage.toLowerCase() : 'backlog'
+                        }));
+                        renderBoard();
+                        showToast("☁️ Loaded spreadsheet data!");
+                    } else {
+                        showToast("No active data found inside spreadsheet", "⚠️");
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    showToast("Connection failed. Check your Web App configuration.", "❌");
+                });
+        }
+
+        // Push dataset
+        function pushToSheet() {
+            const url = localStorage.getItem('marketing_hub_gas_url');
+            if (!url) {
+                showToast("Configure your Google Sheet URL first!", "⚠️");
+                openSyncModal();
+                return;
+            }
+
+            showToast("📤 Pushing board status to Cloud...", "⏳");
+
+            fetch(url, {
+                method: 'POST',
+                mode: 'no-cors', // Apps Script requires no-cors redirect handling
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tasks: tasks })
+            })
+            .then(() => {
+                showToast("☁️ Board synchronized to Google Sheet!");
+            })
+            .catch(err => {
+                console.error(err);
+                showToast("Network dispatch failed.", "❌");
+            });
+        }
+    </script>
+</body>
+</html>
