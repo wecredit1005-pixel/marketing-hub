@@ -40,13 +40,6 @@
             width: 100%;
             height: 180px;
         }
-        @keyframes pulse-subtle {
-            0%, 100% { border-color: #fcd34d; box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.2); }
-            50% { border-color: #f59e0b; box-shadow: 0 0 12px 4px rgba(245, 158, 11, 0.4); }
-        }
-        .transition-alert {
-            animation: pulse-subtle 4s infinite ease-in-out;
-        }
     </style>
 </head>
 <body class="h-full flex flex-col overflow-x-hidden text-slate-800">
@@ -58,18 +51,28 @@
                 <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md shadow-indigo-100">M</div>
                 <div>
                     <h1 class="text-md font-bold text-slate-900 leading-none">Marketing Ops Hub</h1>
-                    <p class="text-[11px] text-slate-500 font-medium">Team Workflow & Cloud Sheet Sync</p>
+                    <p class="text-[11px] text-slate-500 font-medium">Team Workflow & Smart Cloud Sync</p>
                 </div>
             </div>
             
             <!-- Operational Sync Toolbar -->
             <div class="flex flex-wrap items-center gap-2">
+                <!-- Manager Mode Controller -->
+                <button id="manager-mode-btn" onclick="toggleManagerLock()" class="px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100">
+                    <span id="manager-lock-icon">🔒</span>
+                    <span id="manager-lock-text">Staff Mode</span>
+                </button>
+
                 <!-- Status indicator -->
                 <div id="sync-status" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-600">
                     <span class="w-2.5 h-2.5 rounded-full bg-slate-400 block" id="sync-indicator-dot"></span>
                     <span id="sync-status-text">Disconnected</span>
                 </div>
+
                 <!-- Action Buttons -->
+                <button onclick="openArchiveModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1 border border-slate-200">
+                    📦 Archive List
+                </button>
                 <button onclick="openSyncModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1 border border-slate-200">
                     ⚙️ Settings
                 </button>
@@ -137,7 +140,10 @@
         <section class="space-y-4">
             <div class="flex justify-between items-center">
                 <div>
-                    <h2 class="text-lg font-bold text-slate-900">Task Management Board</h2>
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        Task Management Board
+                        <span id="board-role-badge" class="text-xs font-normal text-slate-500 px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200">Staff Mode: Review stage is the journey limit</span>
+                    </h2>
                     <p class="text-xs text-slate-500">Drag & drop tasks across stages to organize. Double-click or click to modify details.</p>
                 </div>
                 <button onclick="openTaskModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2.5 rounded-lg transition flex items-center gap-1 shadow-md shadow-indigo-100">
@@ -192,14 +198,20 @@
                 </div>
 
                 <!-- Live / Done -->
-                <div class="bg-slate-100 rounded-xl p-3 border border-slate-200 flex flex-col min-w-[220px]">
-                    <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
-                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+                <div class="bg-slate-50 rounded-xl p-3 border border-dashed border-slate-300 flex flex-col min-w-[220px] relative">
+                    <!-- Overlaid Lock Guard Graphic if locked -->
+                    <div id="done-lock-overlay" class="absolute inset-0 bg-slate-900/5 backdrop-blur-[0.5px] rounded-xl flex flex-col items-center justify-center p-4 text-center select-none pointer-events-none z-10 transition-opacity duration-200">
+                        <span class="text-lg">🔒</span>
+                        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-wider mt-1">Manager Only Area</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200 relative z-20">
+                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
                             ✅ Done
                         </span>
                         <span id="count-done" class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
                     </div>
-                    <div id="col-done" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'done')" class="kanban-column space-y-3 flex-grow rounded-lg p-1"></div>
+                    <div id="col-done" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'done')" class="kanban-column space-y-3 flex-grow rounded-lg p-1 relative z-20"></div>
                 </div>
 
             </div>
@@ -220,6 +232,22 @@
         </div>
     </div>
 
+    <!-- Manager Password Verification Modal -->
+    <div id="managerAuthModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-xs p-6 space-y-4">
+            <div class="text-center">
+                <span class="text-2xl">🔐</span>
+                <h4 class="text-sm font-bold text-slate-900 mt-2">Enter Manager Password</h4>
+                <p class="text-[10px] text-slate-400 mt-1">Default passcode is <code class="font-bold bg-slate-100 px-1 rounded">1234</code>. Modify this in settings.</p>
+            </div>
+            <input type="password" id="managerPinInput" placeholder="••••" class="w-full text-center tracking-widest bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-md outline-none focus:ring-2 focus:ring-indigo-500">
+            <div class="flex gap-2">
+                <button onclick="closeManagerAuth(false)" class="flex-1 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg text-xs font-semibold">Cancel</button>
+                <button onclick="closeManagerAuth(true)" class="flex-1 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg text-xs font-semibold">Unlock</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Notification Toast -->
     <div id="toastNotification" class="fixed bottom-6 right-6 z-[120] transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
         <div id="toastContent" class="bg-slate-900 text-white px-5 py-3.5 rounded-xl shadow-lg text-xs font-medium flex items-center gap-2.5 max-w-sm">
@@ -232,21 +260,57 @@
     <div id="syncSettingsModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
         <div class="bg-white rounded-3xl shadow-xl w-full max-w-md overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                <h3 class="text-sm font-bold text-slate-900">Google Sheet Sync Settings</h3>
+                <h3 class="text-sm font-bold text-slate-900">System Integration Settings</h3>
                 <button onclick="closeSyncModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
             </div>
             <div class="p-6 space-y-4">
                 <div>
                     <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Apps Script Web App URL</label>
                     <input type="url" id="sheetUrlInput" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
-                    <p class="text-[10px] text-slate-400 mt-1.5 leading-relaxed">
-                        To fetch this URL, navigate to your Google Sheet -> Apps Script, paste the deployed API Bridge code, and select "Deploy" -> "New Deployment" -> "Web App". Set access parameter to "Anyone".
-                    </p>
                 </div>
+
+                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-800">Automatic Backend Syncing</h4>
+                        <p class="text-[10px] text-slate-400">Instantly write card updates, deletions, and moves to your Google Sheet.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="autoSyncToggle" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Manager Security Passcode</label>
+                    <input type="password" id="managerPinConfig" placeholder="Enter new numerical PIN" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                </div>
+
                 <div class="pt-2 flex gap-2">
                     <button onclick="closeSyncModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-lg text-xs transition">Cancel</button>
                     <button onclick="saveSyncSettings()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg text-xs transition shadow">Save Configuration</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Archived Tasks Inventory Modal -->
+    <div id="archiveInventoryModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col h-[600px]">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900">Archived Work Ledger</h3>
+                    <p class="text-[10px] text-slate-400">Holds completed items automatically transferred out after 12 hours of completion.</p>
+                </div>
+                <button onclick="closeArchiveModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-6 space-y-3 custom-scrollbar" id="archiveListContainer">
+                <!-- Archived task items will be injected here -->
+            </div>
+            
+            <div class="px-6 py-4 border-t border-slate-100 flex justify-between bg-slate-50">
+                <p class="text-[10px] text-slate-400 flex items-center">📦 Archiving runs continuously on action checks.</p>
+                <button onclick="closeArchiveModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-4 py-2 rounded-lg transition border border-slate-200">Close</button>
             </div>
         </div>
     </div>
@@ -312,7 +376,7 @@
                             <option value="upnext">Up Next</option>
                             <option value="inprogress">In Progress</option>
                             <option value="review">Review</option>
-                            <option value="done">Done</option>
+                            <option id="stage-done-option" value="done" disabled>Done (Requires Manager Mode)</option>
                         </select>
                     </div>
                 </div>
@@ -326,18 +390,24 @@
     </div>
 
     <script>
-        // Global State
+        // Global State Configuration
         let tasks = [
-            { id: "1001", title: "Technical audit SEO standard SOP draft", assignee: "Vivek Vishal", channel: "SEO", priority: "high", stage: "review" },
-            { id: "1002", title: "Instagram assets layout template generation", assignee: "Anchal Sharma", channel: "Graphic Design", priority: "medium", stage: "inprogress" },
-            { id: "1003", title: "Draft copywriting outline for product newsletter", assignee: "Ankit Kumar", channel: "Content/Copywriting", priority: "medium", stage: "upnext" },
-            { id: "1004", title: "Deploy FB programmatic audience filters", assignee: "Tushar Kumar", channel: "Campaigns/Ads", priority: "high", stage: "inprogress" },
-            { id: "1005", title: "Schedule social media calendar posts for July", assignee: "Riya Mishra", channel: "Social Media", priority: "low", stage: "backlog" }
+            { id: "1001", title: "Technical audit SEO standard SOP draft", assignee: "Vivek Vishal", channel: "SEO", priority: "high", stage: "review", lastmodified: Date.now().toString(), donetimestamp: "" },
+            { id: "1002", title: "Instagram assets layout template generation", assignee: "Anchal Sharma", channel: "Graphic Design", priority: "medium", stage: "inprogress", lastmodified: Date.now().toString(), donetimestamp: "" },
+            { id: "1003", title: "Draft copywriting outline for product newsletter", assignee: "Ankit Kumar", channel: "Content/Copywriting", priority: "medium", stage: "upnext", lastmodified: Date.now().toString(), donetimestamp: "" },
+            { id: "1004", title: "Deploy FB programmatic audience filters", assignee: "Tushar Kumar", channel: "Campaigns/Ads", priority: "high", stage: "inprogress", lastmodified: Date.now().toString(), donetimestamp: "" },
+            { id: "1005", title: "Schedule social media calendar posts for July", assignee: "Riya Mishra", channel: "Social Media", priority: "low", stage: "backlog", lastmodified: Date.now().toString(), donetimestamp: "" }
         ];
+
+        let archivedTasks = [];
+        let deletedTaskIds = []; // Track deletion sessions to prevent cloud merge conflicts
+        let isManagerUnlocked = false;
+        let managerPin = "1234";
 
         let workloadChart = null;
         let pipelineChart = null;
         let confirmPromiseResolver = null;
+        let authPromiseResolver = null;
 
         // Channel Color Badges
         const BADGE_THEMES = {
@@ -348,36 +418,116 @@
             "SEO": "bg-emerald-50 border-emerald-200 text-emerald-700"
         };
 
-        function toggleCustomChannelInput() {
-            const channelSelect = document.getElementById('taskChannel');
-            const customWrapper = document.getElementById('customChannelWrapper');
-            const customInput = document.getElementById('customChannelInput');
-            if (channelSelect.value === 'Other') {
-                customWrapper.classList.remove('hidden');
-                customInput.required = true;
-            } else {
-                customWrapper.classList.add('hidden');
-                customInput.required = false;
-            }
-        }
-
         window.addEventListener('DOMContentLoaded', () => {
-            // Load from Local Cache if present
-            const localTasks = localStorage.getItem('marketing_tasks_backup');
+            // Restore from Cache Storage
+            const localTasks = localStorage.getItem('marketing_tasks_backup_v2');
             if (localTasks) {
-                try {
-                    tasks = JSON.parse(localTasks);
-                } catch(e) {
-                    console.error("Local recovery error, loading defaults.");
-                }
+                try { tasks = JSON.parse(localTasks); } catch(e) { console.error("Restore mismatch, keeping defaults."); }
             }
             
+            const localArchive = localStorage.getItem('marketing_tasks_archive_v2');
+            if (localArchive) {
+                try { archivedTasks = JSON.parse(localArchive); } catch(e) { console.error("Archive restore issue."); }
+            }
+
+            const savedPin = localStorage.getItem('marketing_hub_manager_pin');
+            if (savedPin) { managerPin = savedPin; }
+
+            const autoSyncEnabled = localStorage.getItem('marketing_hub_autosync') === 'true';
+            document.getElementById('autoSyncToggle').checked = autoSyncEnabled;
+
             checkConnectionStatus();
             initCharts();
+            runAutomatedArchiver(); // Run check instantly on load
             renderBoard();
         });
 
-        // Setup Chart.js Analytics
+        // 12-Hour Archiver Engine
+        function runAutomatedArchiver() {
+            const now = Date.now();
+            const twelveHours = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
+            let madeArchiveChanges = false;
+
+            tasks = tasks.filter(task => {
+                if (task.stage === 'done' && task.donetimestamp) {
+                    const doneTime = parseInt(task.donetimestamp);
+                    if (now - doneTime >= twelveHours) {
+                        archivedTasks.push({
+                            ...task,
+                            archivedAt: now
+                        });
+                        madeArchiveChanges = true;
+                        return false; // Remove from active board
+                    }
+                }
+                return true;
+            });
+
+            if (madeArchiveChanges) {
+                localStorage.setItem('marketing_tasks_backup_v2', JSON.stringify(tasks));
+                localStorage.setItem('marketing_tasks_archive_v2', JSON.stringify(archivedTasks));
+                showToast("📦 Tasks in Done longer than 12 hours archived successfully", "📦");
+                if (isAutoSyncActive()) {
+                    pushToSheet(true); // Silent push background sync
+                }
+            }
+        }
+
+        // Custom Security Lock controllers
+        function toggleManagerLock() {
+            if (isManagerUnlocked) {
+                // Lock instantly
+                isManagerUnlocked = false;
+                document.getElementById('manager-lock-icon').innerText = "🔒";
+                document.getElementById('manager-lock-text').innerText = "Staff Mode";
+                document.getElementById('board-role-badge').innerText = "Staff Mode: Review stage is the journey limit";
+                document.getElementById('done-lock-overlay').classList.remove('opacity-0');
+                document.getElementById('done-lock-overlay').classList.add('flex');
+                document.getElementById('stage-done-option').disabled = true;
+                showToast("🔒 Secure Staff Mode active", "🔒");
+                renderBoard();
+            } else {
+                // Open auth verification window
+                openManagerAuth();
+            }
+        }
+
+        function openManagerAuth() {
+            document.getElementById('managerPinInput').value = "";
+            document.getElementById('managerAuthModal').classList.remove('hidden');
+            document.getElementById('managerAuthModal').classList.add('flex');
+            document.getElementById('managerPinInput').focus();
+            
+            return new Promise((resolve) => {
+                authPromiseResolver = resolve;
+            });
+        }
+
+        function closeManagerAuth(success) {
+            const inputVal = document.getElementById('managerPinInput').value;
+            document.getElementById('managerAuthModal').classList.add('hidden');
+            document.getElementById('managerAuthModal').classList.remove('flex');
+            
+            if (success) {
+                if (inputVal === managerPin) {
+                    isManagerUnlocked = true;
+                    document.getElementById('manager-lock-icon').innerText = "🔓";
+                    document.getElementById('manager-lock-text').innerText = "Manager Mode";
+                    document.getElementById('board-role-badge').innerText = "Manager Mode: Full control active";
+                    document.getElementById('done-lock-overlay').classList.add('opacity-0');
+                    setTimeout(() => {
+                        document.getElementById('done-lock-overlay').classList.remove('flex');
+                    }, 200);
+                    document.getElementById('stage-done-option').disabled = false;
+                    showToast("🔓 Manager privileges granted!", "🔑");
+                    renderBoard();
+                } else {
+                    showToast("❌ Incorrect passcode configuration", "🚫");
+                }
+            }
+        }
+
+        // Charts configuration
         function initCharts() {
             const ctxWorkload = document.getElementById('workloadChart').getContext('2d');
             workloadChart = new Chart(ctxWorkload, {
@@ -429,7 +579,7 @@
             });
         }
 
-        // Render Kanban board columns
+        // Core Renderer
         function renderBoard() {
             const filterValue = document.getElementById('memberFilter').value;
             const columns = ['backlog', 'upnext', 'inprogress', 'review', 'done'];
@@ -444,6 +594,8 @@
                 filtered.forEach(task => {
                     const card = document.createElement('div');
                     card.className = "bg-white p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:shadow-md transition duration-150 cursor-grab active:cursor-grabbing relative group shadow-sm";
+                    
+                    // Conditionally lock dragging for done column, or dragging from review to done if not manager
                     card.draggable = true;
                     card.id = `task-${task.id}`;
                     card.ondragstart = drag;
@@ -481,15 +633,21 @@
                 });
             });
 
-            // Cache data locally in case session drops
-            localStorage.setItem('marketing_tasks_backup', JSON.stringify(tasks));
+            // Auto lock graphic check
+            if (!isManagerUnlocked) {
+                document.getElementById('done-lock-overlay').classList.remove('hidden');
+                document.getElementById('done-lock-overlay').classList.remove('opacity-0');
+                document.getElementById('done-lock-overlay').classList.add('flex');
+            }
+
+            // Sync with memory
+            localStorage.setItem('marketing_tasks_backup_v2', JSON.stringify(tasks));
             updateCharts();
         }
 
         function updateCharts() {
             if (!workloadChart || !pipelineChart) return;
 
-            // 1. Calculate Active Workloads (Excluding Done tasks)
             const members = ['Riya Mishra', 'Anchal Sharma', 'Ankit Kumar', 'Ritu Chola', 'Tushar Kumar', 'Vivek Vishal'];
             const workloads = { 'Riya Mishra': 0, 'Anchal Sharma': 0, 'Ankit Kumar': 0, 'Ritu Chola': 0, 'Tushar Kumar': 0, 'Vivek Vishal': 0 };
 
@@ -499,11 +657,10 @@
                 }
             });
 
-            workloadChart.data.labels = Object.keys(workloads).map(name => name.split(' ')[0]); // Display just first name
+            workloadChart.data.labels = Object.keys(workloads).map(name => name.split(' ')[0]);
             workloadChart.data.datasets[0].data = Object.values(workloads);
             workloadChart.update();
 
-            // 2. Calculate Pipeline Stage Velocity
             const pipeline = { backlog: 0, upnext: 0, inprogress: 0, review: 0, done: 0 };
             tasks.forEach(t => {
                 if (pipeline.hasOwnProperty(t.stage)) {
@@ -515,7 +672,6 @@
             pipelineChart.update();
         }
 
-        // Drag and Drop Controllers
         function allowDrop(e) { e.preventDefault(); }
         function drag(e) { e.dataTransfer.setData("text", e.target.id); }
         function dragEnter(e) { e.currentTarget.classList.add('drag-over'); }
@@ -525,19 +681,56 @@
             e.preventDefault();
             const col = e.currentTarget;
             col.classList.remove('drag-over');
+
+            if (targetStage === 'done' && !isManagerUnlocked) {
+                showToast("🚫 Staff Mode Lock active. Manager verification required to push into Done stage.", "🔒");
+                return;
+            }
             
-            const rawId = e.dataTransfer.getData("text");
-            const taskId = rawId.split('-')[1];
+            const rawId = e.dataTransfer.setData ? e.dataTransfer.getData("text") : e.target.id;
+            const cleanRawId = rawId.startsWith('task-') ? rawId : `task-${e.dataTransfer.getData("text")}`;
+            const taskId = cleanRawId.split('-')[1];
             
             const targetTask = tasks.find(t => t.id === taskId);
             if (targetTask) {
+                // Journey limit validations
+                if (targetTask.stage === 'done' && targetStage !== 'done' && !isManagerUnlocked) {
+                    showToast("🚫 Only Managers can pull a task back out of the Done stage", "🔒");
+                    return;
+                }
+
                 targetTask.stage = targetStage;
+                targetTask.lastmodified = Date.now().toString();
+
+                if (targetStage === 'done') {
+                    targetTask.donetimestamp = Date.now().toString();
+                } else {
+                    targetTask.donetimestamp = "";
+                }
+
                 renderBoard();
-                showToast("⚡ Task stage updated");
+                showToast(`⚡ Task stage updated to ${targetStage}`);
+                
+                if (isAutoSyncActive()) {
+                    pushToSheet(true);
+                }
             }
         }
 
-        // Forms Controls
+        // Settings / Custom Modal Controllers
+        function toggleCustomChannelInput() {
+            const channelSelect = document.getElementById('taskChannel');
+            const customWrapper = document.getElementById('customChannelWrapper');
+            const customInput = document.getElementById('customChannelInput');
+            if (channelSelect.value === 'Other') {
+                customWrapper.classList.remove('hidden');
+                customInput.required = true;
+            } else {
+                customWrapper.classList.add('hidden');
+                customInput.required = false;
+            }
+        }
+
         function openTaskModal() {
             document.getElementById('modalTitle').innerText = "Create New Task";
             document.getElementById('taskForm').reset();
@@ -545,6 +738,10 @@
             document.getElementById('customChannelWrapper').classList.add('hidden');
             document.getElementById('customChannelInput').value = '';
             document.getElementById('customChannelInput').required = false;
+            
+            // Limit Done selection option unless unlocked
+            document.getElementById('stage-done-option').disabled = !isManagerUnlocked;
+
             document.getElementById('taskModal').classList.remove('hidden');
             document.getElementById('taskModal').classList.add('flex');
         }
@@ -552,6 +749,12 @@
         function openEditTask(id) {
             const task = tasks.find(t => t.id === id);
             if (!task) return;
+
+            // Restrict done editing access
+            if (task.stage === 'done' && !isManagerUnlocked) {
+                showToast("🔒 Tasks in Done stage are locked and require Manager Mode to edit details.", "🔒");
+                return;
+            }
 
             document.getElementById('modalTitle').innerText = "Edit Task Details";
             document.getElementById('taskId').value = task.id;
@@ -573,6 +776,7 @@
 
             document.getElementById('taskPriority').value = task.priority;
             document.getElementById('taskStage').value = task.stage;
+            document.getElementById('stage-done-option').disabled = !isManagerUnlocked;
 
             document.getElementById('taskModal').classList.remove('hidden');
             document.getElementById('taskModal').classList.add('flex');
@@ -597,41 +801,66 @@
             const priority = document.getElementById('taskPriority').value;
             const stage = document.getElementById('taskStage').value;
 
+            if (stage === 'done' && !isManagerUnlocked) {
+                showToast("🚫 Only Managers can push tasks to Done stage.", "🔒");
+                return;
+            }
+
             if (id) {
-                // Editing
+                // Editing existing
                 const idx = tasks.findIndex(t => t.id === id);
                 if (idx !== -1) {
-                    tasks[idx] = { id, title, assignee, channel, priority, stage };
+                    const originalStage = tasks[idx].stage;
+                    const doneStamp = (stage === 'done') ? (originalStage === 'done' ? tasks[idx].donetimestamp : Date.now().toString()) : "";
+
+                    tasks[idx] = { 
+                        id, title, assignee, channel, priority, stage, 
+                        lastmodified: Date.now().toString(),
+                        donetimestamp: doneStamp 
+                    };
                     showToast("✏️ Task updated successfully");
                 }
             } else {
-                // Creating
+                // Creating new
                 const newTask = {
                     id: Date.now().toString(),
-                    title, assignee, channel, priority, stage
+                    title, assignee, channel, priority, stage,
+                    lastmodified: Date.now().toString(),
+                    donetimestamp: (stage === 'done') ? Date.now().toString() : ""
                 };
                 tasks.push(newTask);
                 showToast("🎉 New task created");
             }
 
             closeTaskModal();
+            runAutomatedArchiver(); // Run check in case newly set task immediately fulfills archive limits
             renderBoard();
+            
+            if (isAutoSyncActive()) {
+                pushToSheet(true);
+            }
         }
 
-        // Delete flow (No Window Alert/Confirm)
+        // Custom Delete & Confirm Modal logic
         function triggerDelete(e, id) {
-            e.stopPropagation(); // Avoid opening edit modal immediately
+            e.stopPropagation();
             showConfirmModal("Confirm Deletion", "Are you sure you want to permanently delete this task?")
                 .then(confirmed => {
                     if (confirmed) {
                         tasks = tasks.filter(t => t.id !== id);
+                        deletedTaskIds.push(id.toString()); // Log local deletion so Pull updates respect this edit
+                        localStorage.setItem('marketing_tasks_deleted_log', JSON.stringify(deletedTaskIds));
+                        
                         renderBoard();
                         showToast("🗑️ Task has been deleted");
+                        
+                        if (isAutoSyncActive()) {
+                            pushToSheet(true);
+                        }
                     }
                 });
         }
 
-        // Custom Confirm Handling
         function showConfirmModal(title, text) {
             document.getElementById('confirmTitle').innerText = title;
             document.getElementById('confirmText').innerText = text;
@@ -646,12 +875,10 @@
         function closeConfirmModal(outcome) {
             document.getElementById('customConfirmModal').classList.add('hidden');
             document.getElementById('customConfirmModal').classList.remove('flex');
-            if (confirmPromiseResolver) {
-                confirmPromiseResolver(outcome);
-            }
+            if (confirmPromiseResolver) { confirmPromiseResolver(outcome); }
         }
 
-        // Toast Messages
+        // Toast Engine
         function showToast(message, icon = "✅") {
             const toast = document.getElementById('toastNotification');
             document.getElementById('toastMessage').innerText = message;
@@ -666,12 +893,88 @@
             }, 3000);
         }
 
-        // Google Sheet Apps Script Synchronizer Integration
+        // Archive Modal Actions
+        function openArchiveModal() {
+            renderArchiveList();
+            document.getElementById('archiveInventoryModal').classList.remove('hidden');
+            document.getElementById('archiveInventoryModal').classList.add('flex');
+        }
+
+        function closeArchiveModal() {
+            document.getElementById('archiveInventoryModal').classList.add('hidden');
+            document.getElementById('archiveInventoryModal').classList.remove('flex');
+        }
+
+        function renderArchiveList() {
+            const container = document.getElementById('archiveListContainer');
+            container.innerHTML = "";
+
+            if (archivedTasks.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-slate-400">
+                        <span class="text-3xl block">📦</span>
+                        <p class="text-xs font-semibold mt-2">Archive database is currently empty.</p>
+                        <p class="text-[10px] mt-1">Completed items that have reached the 12-hour limit will populate here.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            archivedTasks.forEach((task, idx) => {
+                const archiveCard = document.createElement('div');
+                archiveCard.className = "p-4 rounded-xl border border-slate-200 bg-slate-50 flex justify-between items-center";
+                
+                const archiveDateStr = task.archivedAt ? new Date(task.archivedAt).toLocaleString() : 'N/A';
+
+                archiveCard.innerHTML = `
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-slate-200 text-slate-600">${task.channel}</span>
+                            <span class="text-[9px] text-slate-400 font-semibold">Archived: ${archiveDateStr}</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-slate-800">${task.title}</h4>
+                        <p class="text-[10px] text-slate-500">Assignee: ${task.assignee} | Priority: ${task.priority}</p>
+                    </div>
+                    <div>
+                        <button onclick="restoreFromArchive(${idx})" class="text-[11px] font-semibold text-indigo-600 bg-white hover:bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-lg transition">
+                            Restore to Board
+                        </button>
+                    </div>
+                `;
+                container.appendChild(archiveCard);
+            });
+        }
+
+        function restoreFromArchive(idx) {
+            const restoredTask = archivedTasks[idx];
+            
+            // Set restored stage back to Review so manager must confirm complete or move it elsewhere
+            restoredTask.stage = "review";
+            restoredTask.donetimestamp = "";
+            restoredTask.lastmodified = Date.now().toString();
+
+            // Insert back to active array
+            tasks.push(restoredTask);
+            archivedTasks.splice(idx, 1);
+
+            localStorage.setItem('marketing_tasks_backup_v2', JSON.stringify(tasks));
+            localStorage.setItem('marketing_tasks_archive_v2', JSON.stringify(archivedTasks));
+
+            renderBoard();
+            renderArchiveList();
+            showToast("📦 Task successfully restored back to board", "⚡");
+
+            if (isAutoSyncActive()) {
+                pushToSheet(true);
+            }
+        }
+
         function openSyncModal() {
             const savedUrl = localStorage.getItem('marketing_hub_gas_url') || '';
             document.getElementById('sheetUrlInput').value = savedUrl;
             document.getElementById('syncSettingsModal').classList.remove('hidden');
             document.getElementById('syncSettingsModal').classList.add('flex');
+            document.getElementById('managerPinConfig').value = managerPin;
         }
 
         function closeSyncModal() {
@@ -679,17 +982,32 @@
             document.getElementById('syncSettingsModal').classList.remove('flex');
         }
 
+        function isAutoSyncActive() {
+            return localStorage.getItem('marketing_hub_autosync') === 'true';
+        }
+
         function saveSyncSettings() {
             const url = document.getElementById('sheetUrlInput').value.trim();
+            const configPin = document.getElementById('managerPinConfig').value.trim();
+            const isAutoSync = document.getElementById('autoSyncToggle').checked;
+
             if (url) {
                 localStorage.setItem('marketing_hub_gas_url', url);
+                localStorage.setItem('marketing_hub_autosync', isAutoSync ? 'true' : 'false');
                 checkConnectionStatus();
-                showToast("⚙️ Sync URL configured!");
+                showToast("⚙️ Sync configurations saved!");
             } else {
                 localStorage.removeItem('marketing_hub_gas_url');
+                localStorage.removeItem('marketing_hub_autosync');
                 checkConnectionStatus();
-                showToast("⚠️ Sync URL removed", "ℹ️");
+                showToast("⚠️ Sync configurations cleared", "ℹ️");
             }
+
+            if (configPin) {
+                managerPin = configPin;
+                localStorage.setItem('marketing_hub_manager_pin', configPin);
+            }
+
             closeSyncModal();
         }
 
@@ -700,14 +1018,14 @@
 
             if (url) {
                 dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 block animate-pulse";
-                text.innerText = "Connected to Cloud";
+                text.innerText = isAutoSyncActive() ? "Live Connected" : "Cloud Ready";
             } else {
                 dot.className = "w-2.5 h-2.5 rounded-full bg-amber-400 block";
                 text.innerText = "Local-Only Cache";
             }
         }
 
-        // Pull dataset
+        // Smart Conflict Resolution Pulling Method
         function pullFromSheet() {
             const url = localStorage.getItem('marketing_hub_gas_url');
             if (!url) {
@@ -716,7 +1034,7 @@
                 return;
             }
 
-            showToast("🔄 Fetching latest from Cloud...", "⏳");
+            showToast("🔄 Smart pulling and resolving updates...", "⏳");
             
             fetch(url)
                 .then(response => {
@@ -725,50 +1043,92 @@
                 })
                 .then(cloudTasks => {
                     if (cloudTasks && Array.isArray(cloudTasks)) {
-                        // Normalize headers if any uppercase/lowercase mismatch occurs
-                        tasks = cloudTasks.map(t => ({
+                        // Restore local deletions log list
+                        const logStr = localStorage.getItem('marketing_tasks_deleted_log') || '[]';
+                        try { deletedTaskIds = JSON.parse(logStr); } catch(e) { deletedTaskIds = []; }
+
+                        // Map and clean cloud records
+                        const normalizedCloud = cloudTasks.map(t => ({
                             id: t.id ? t.id.toString() : Date.now().toString(),
-                            title: t.title || t.name || 'Untitled Task',
+                            title: t.title || 'Untitled Task',
                             assignee: t.assignee || 'Unassigned',
                             channel: t.channel || 'General',
                             priority: t.priority ? t.priority.toLowerCase() : 'medium',
-                            stage: t.stage ? t.stage.toLowerCase() : 'backlog'
+                            stage: t.stage ? t.stage.toLowerCase() : 'backlog',
+                            lastmodified: t.lastmodified ? t.lastmodified.toString() : "0",
+                            donetimestamp: t.donetimestamp ? t.donetimestamp.toString() : ""
                         }));
+
+                        // Perform Smart Merge based on lastmodified time stamps
+                        const mergedMap = new Map();
+                        
+                        // Push local state items
+                        tasks.forEach(lt => mergedMap.set(lt.id, lt));
+
+                        // Compare with cloud tasks
+                        normalizedCloud.forEach(ct => {
+                            // If task was deleted locally, ignore cloud record
+                            if (deletedTaskIds.includes(ct.id)) {
+                                return;
+                            }
+
+                            if (!mergedMap.has(ct.id)) {
+                                // Task only exists on cloud, pull it in
+                                mergedMap.set(ct.id, ct);
+                            } else {
+                                // Conflict Resolve: Compare LastModified Timestamps
+                                const localTime = parseInt(mergedMap.get(ct.id).lastmodified) || 0;
+                                const cloudTime = parseInt(ct.lastmodified) || 0;
+                                if (cloudTime > localTime) {
+                                    mergedMap.set(ct.id, ct);
+                                }
+                            }
+                        });
+
+                        tasks = Array.from(mergedMap.values());
+                        
+                        // Clear deleted ledger if pull state resolves fully
+                        deletedTaskIds = [];
+                        localStorage.setItem('marketing_tasks_deleted_log', JSON.stringify([]));
+
+                        runAutomatedArchiver(); // Run check in case newly pulled tasks should be instantly archived
                         renderBoard();
-                        showToast("☁️ Loaded spreadsheet data!");
+                        showToast("☁️ Merge Sync completed successfully!");
                     } else {
-                        showToast("No active data found inside spreadsheet", "⚠️");
+                        showToast("Empty data ledger on cloud", "⚠️");
                     }
                 })
                 .catch(err => {
                     console.error(err);
-                    showToast("Connection failed. Check your Web App configuration.", "❌");
+                    showToast("Sync bridge connection failure.", "❌");
                 });
         }
 
-        // Push dataset
-        function pushToSheet() {
+        // Syncing state out
+        function pushToSheet(isSilent = false) {
             const url = localStorage.getItem('marketing_hub_gas_url');
             if (!url) {
-                showToast("Configure your Google Sheet URL first!", "⚠️");
-                openSyncModal();
+                if (!isSilent) {
+                    showToast("Configure your Google Sheet URL first!", "⚠️");
+                    openSyncModal();
+                }
                 return;
             }
 
-            showToast("📤 Pushing board status to Cloud...", "⏳");
+            if (!isSilent) { showToast("📤 Synchronizing to cloud...", "⏳"); }
 
             fetch(url, {
                 method: 'POST',
-                mode: 'no-cors', // Apps Script requires no-cors redirect handling
+                mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ tasks: tasks })
             })
             .then(() => {
-                showToast("☁️ Board synchronized to Google Sheet!");
+                if (!isSilent) { showToast("☁️ Cloud updated in lockstep!", "✅"); }
             })
             .catch(err => {
                 console.error(err);
-                showToast("Network dispatch failed.", "❌");
+                if (!isSilent) { showToast("Cloud push failed.", "❌"); }
             });
         }
     </script>
