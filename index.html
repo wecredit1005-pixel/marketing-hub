@@ -280,14 +280,20 @@
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Channel</label>
-                        <select id="taskChannel" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                        <select id="taskChannel" onchange="toggleCustomChannelInput()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
                             <option>Social Media</option>
                             <option>Graphic Design</option>
                             <option>Content/Copywriting</option>
                             <option>Campaigns/Ads</option>
                             <option>SEO</option>
+                            <option value="Other">Other</option>
                         </select>
                     </div>
+                </div>
+
+                <div id="customChannelWrapper" class="hidden">
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Custom Channel Name</label>
+                    <input type="text" id="customChannelInput" placeholder="e.g. Email Marketing" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
@@ -341,6 +347,19 @@
             "Campaigns/Ads": "bg-amber-50 border-amber-200 text-amber-700",
             "SEO": "bg-emerald-50 border-emerald-200 text-emerald-700"
         };
+
+        function toggleCustomChannelInput() {
+            const channelSelect = document.getElementById('taskChannel');
+            const customWrapper = document.getElementById('customChannelWrapper');
+            const customInput = document.getElementById('customChannelInput');
+            if (channelSelect.value === 'Other') {
+                customWrapper.classList.remove('hidden');
+                customInput.required = true;
+            } else {
+                customWrapper.classList.add('hidden');
+                customInput.required = false;
+            }
+        }
 
         window.addEventListener('DOMContentLoaded', () => {
             // Load from Local Cache if present
@@ -430,7 +449,7 @@
                     card.ondragstart = drag;
                     card.onclick = () => openEditTask(task.id);
 
-                    const badgeTheme = BADGE_THEMES[task.channel] || 'bg-slate-100 text-slate-700';
+                    const badgeTheme = BADGE_THEMES[task.channel] || 'bg-slate-50 border-slate-200 text-slate-600 border';
                     const priorityDot = task.priority === 'high' ? 'bg-red-500' : task.priority === 'medium' ? 'bg-amber-400' : 'bg-emerald-400';
 
                     card.innerHTML = `
@@ -523,6 +542,9 @@
             document.getElementById('modalTitle').innerText = "Create New Task";
             document.getElementById('taskForm').reset();
             document.getElementById('taskId').value = '';
+            document.getElementById('customChannelWrapper').classList.add('hidden');
+            document.getElementById('customChannelInput').value = '';
+            document.getElementById('customChannelInput').required = false;
             document.getElementById('taskModal').classList.remove('hidden');
             document.getElementById('taskModal').classList.add('flex');
         }
@@ -535,7 +557,20 @@
             document.getElementById('taskId').value = task.id;
             document.getElementById('taskTitle').value = task.title;
             document.getElementById('taskAssignee').value = task.assignee;
-            document.getElementById('taskChannel').value = task.channel;
+            
+            const defaultChannels = ["Social Media", "Graphic Design", "Content/Copywriting", "Campaigns/Ads", "SEO"];
+            if (defaultChannels.includes(task.channel)) {
+                document.getElementById('taskChannel').value = task.channel;
+                document.getElementById('customChannelWrapper').classList.add('hidden');
+                document.getElementById('customChannelInput').value = '';
+                document.getElementById('customChannelInput').required = false;
+            } else {
+                document.getElementById('taskChannel').value = "Other";
+                document.getElementById('customChannelWrapper').classList.remove('hidden');
+                document.getElementById('customChannelInput').value = task.channel;
+                document.getElementById('customChannelInput').required = true;
+            }
+
             document.getElementById('taskPriority').value = task.priority;
             document.getElementById('taskStage').value = task.stage;
 
@@ -553,7 +588,12 @@
             const id = document.getElementById('taskId').value;
             const title = document.getElementById('taskTitle').value;
             const assignee = document.getElementById('taskAssignee').value;
-            const channel = document.getElementById('taskChannel').value;
+            
+            let channel = document.getElementById('taskChannel').value;
+            if (channel === 'Other') {
+                channel = document.getElementById('customChannelInput').value.trim() || 'Other';
+            }
+
             const priority = document.getElementById('taskPriority').value;
             const stage = document.getElementById('taskStage').value;
 
