@@ -416,7 +416,7 @@
         // =========================================================================
         // ⚠️ CRITICAL: PASTE YOUR DEPLOYED GOOGLE APPS SCRIPT WEB APP URL HERE!
         // This makes the board fully automatic for all team members out-of-the-box!
-        const SYSTEM_DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbwe1ed_3q2fa63CAZjOyqi7DMOI26gIqCY0jmG9cveA3jnrMr4kAGZqZBi5Zh1so54E/exec"; 
+        const SYSTEM_DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbz_v04z9VvL2XlXm9TzN_Uf6b3D-1pGk8YtY-O-eM9_vP1_O-X-x-y-z/exec"; 
         // =========================================================================
 
         let tasks = [
@@ -504,23 +504,6 @@
                 }
             }, 15000); // 15 seconds
         }
-            
-            const localArchive = localStorage.getItem('marketing_tasks_archive_v3');
-            if (localArchive) {
-                try { archivedTasks = JSON.parse(localArchive); } catch(e) { console.error("Archive restore issue."); }
-            }
-
-            const savedPin = localStorage.getItem('marketing_hub_manager_pin');
-            if (savedPin) { managerPin = savedPin; }
-
-            const autoSyncEnabled = localStorage.getItem('marketing_hub_autosync') === 'true';
-            document.getElementById('autoSyncToggle').checked = autoSyncEnabled;
-
-            checkConnectionStatus();
-            initCharts();
-            runAutomatedArchiver(); // Run check instantly on load
-            renderBoard();
-        });
 
         // 12-Hour Archiver Engine
         function runAutomatedArchiver() {
