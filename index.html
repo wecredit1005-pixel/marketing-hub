@@ -208,7 +208,7 @@
             <div class="text-center">
                 <span class="text-2xl">🔐</span>
                 <h4 class="text-sm font-bold text-slate-900 mt-2">Enter Manager Password</h4>
-                <p class="text-[10px] text-slate-400 mt-1">Default passcode is <code class="font-bold bg-slate-100 px-1 rounded">1234</code>. Modify this in settings.</p>
+                <p class="text-[10px] text-slate-400 mt-1">Please enter your authorized manager PIN to continue.</p>
             </div>
             <input type="password" id="managerPinInput" placeholder="••••" class="w-full text-center tracking-widest bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-md outline-none focus:ring-2 focus:ring-indigo-500">
             <div class="flex gap-2">
@@ -374,7 +374,7 @@
     <script>
         // Global State Configuration
         // =========================================================================
-        const SYSTEM_DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbwe1ed_3q2fa63CAZjOyqi7DMOI26gIqCY0jmG9cveA3jnrMr4kAGZqZBi5Zh1so54E/exec"; 
+        const SYSTEM_DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbwcvW_ScnWJarI4ruDVQcgIHe8xyNDW6P_tlQzqzn1zp6-CwF624MUqoNtRVtkZWMss/exec"; 
         // =========================================================================
 
         let tasks = [
@@ -706,30 +706,26 @@
             col.classList.remove('drag-over');
 
             if (targetStage === 'done' && !isManagerUnlocked) {
-                showToast("🚫 Staff Mode Lock active. Manager verification required to push into Done stage.", "🔒");
+                showToast("🚫 Staff Mode Lock active. Manager verification required.", "🔒");
                 return;
             }
             
-            const rawId = e.dataTransfer.setData ? e.dataTransfer.getData("text") : e.target.id;
-            const cleanRawId = rawId.startsWith('task-') ? rawId : `task-${e.dataTransfer.getData("text")}`;
-            const taskId = cleanRawId.split('-')[1];
+            // Simplifed and hardened ID extraction
+            let rawId = e.dataTransfer.getData("text");
+            if (!rawId) return; // Prevent empty drops
             
+            const taskId = rawId.replace('task-', '');
             const targetTask = tasks.find(t => t.id === taskId);
+            
             if (targetTask) {
-                // Journey limit validations
                 if (targetTask.stage === 'done' && targetStage !== 'done' && !isManagerUnlocked) {
-                    showToast("🚫 Only Managers can pull a task back out of the Done stage", "🔒");
+                    showToast("🚫 Only Managers can pull a task back out of Done", "🔒");
                     return;
                 }
 
                 targetTask.stage = targetStage;
                 targetTask.lastmodified = Date.now().toString();
-
-                if (targetStage === 'done') {
-                    targetTask.donetimestamp = Date.now().toString();
-                } else {
-                    targetTask.donetimestamp = "";
-                }
+                targetTask.donetimestamp = (targetStage === 'done') ? Date.now().toString() : "";
 
                 renderBoard();
                 showToast(`⚡ Task stage updated to ${targetStage}`);
@@ -911,9 +907,14 @@
             showConfirmModal("Confirm Deletion", "Are you sure you want to permanently delete this task?")
                 .then(confirmed => {
                     if (confirmed) {
+                        // Remove from local array
                         tasks = tasks.filter(t => t.id !== id);
-                        deletedTaskIds.push(id.toString()); // Log local deletion so Pull updates respect this edit
-                        localStorage.setItem('marketing_tasks_deleted_log', JSON.stringify(deletedTaskIds));
+                        
+                        // Log deletion to prevent cloud ghosting on the next polling cycle
+                        if (!deletedTaskIds.includes(id.toString())) {
+                            deletedTaskIds.push(id.toString());
+                            localStorage.setItem('marketing_tasks_deleted_log', JSON.stringify(deletedTaskIds));
+                        }
                         
                         renderBoard();
                         showToast("🗑️ Task has been deleted");
@@ -1123,26 +1124,51 @@
             const url = localStorage.getItem('marketing_hub_gas_url');
             if (!url) return;
 
-            // Optional: If manual pull clicked, show loading toast
-            if (!isSilent) { showToast("🔄 Fetching latest updates...", "⏳"); }
+            if (!isSilent) showToast("🔄 Fetching latest updates...", "⏳");
 
-            // The "?t=" forces the browser to ignore cache
             const fetchUrl = url.includes("?") ? url + "&t=" + Date.now() : url + "?t=" + Date.now();
 
             fetch(fetchUrl)
                 .then(response => response.json())
                 .then(data => {
-                    // Update local variable directly, falling back to empty array if undefined
-                    tasks = Array.isArray(data) ? data : (data.tasks || []); 
-                    renderBoard(); // Redraws the board with the new data
+                    const cloudTasks = Array.isArray(data) ? data : (data.tasks || []);
+                    
+                    // 1. Fetch our local deletion logs
+                    const logStr = localStorage.getItem('marketing_tasks_deleted_log') || '[]';
+                    let deletedIds = [];
+                    try { deletedIds = JSON.parse(logStr); } catch(e) {}
+
+                    // 2. Map local state to protect our recent changes
+                    const mergedMap = new Map();
+                    tasks.forEach(t => mergedMap.set(t.id, t));
+
+                    // 3. Smart Merge Timestamp Engine
+                    cloudTasks.forEach(ct => {
+                        // If we deleted this locally, completely ignore the cloud version
+                        if (deletedIds.includes(ct.id)) return;
+
+                        if (!mergedMap.has(ct.id)) {
+                            // New task from a teammate, add it
+                            mergedMap.set(ct.id, ct);
+                        } else {
+                            // Conflict! Check which one is newer based on UNIX timestamp
+                            const localTime = parseInt(mergedMap.get(ct.id).lastmodified) || 0;
+                            const cloudTime = parseInt(ct.lastmodified) || 0;
+                            
+                            if (cloudTime > localTime) {
+                                mergedMap.set(ct.id, ct); // Cloud is newer, overwrite local
+                            }
+                        }
+                    });
+
+                    tasks = Array.from(mergedMap.values());
+                    renderBoard(); 
                     
                     if (!isSilent) showToast("Synced with cloud!", "✅");
                 })
                 .catch(err => {
                     console.error("Sync pull failed", err);
-                    if (!isSilent) {
-                        showToast("Sync bridge connection failure.", "❌");
-                    }
+                    if (!isSilent) showToast("Sync bridge connection failure.", "❌");
                 });
         }
 
