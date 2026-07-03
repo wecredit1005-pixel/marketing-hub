@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marketing Ops Hub & Kanban</title>
-    <!-- Tailwind CSS for modern utility-first styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js for real-time workload and velocity visualizations -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -44,7 +41,6 @@
 </head>
 <body class="h-full flex flex-col overflow-x-hidden text-slate-800">
 
-    <!-- Top Header Navigation -->
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 py-3 px-6 shadow-sm">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
             <div class="flex items-center gap-3">
@@ -55,32 +51,29 @@
                 </div>
             </div>
             
-            <!-- Operational Sync Toolbar -->
             <div class="flex flex-wrap items-center gap-2">
-                <!-- Manager Mode Controller -->
                 <button id="manager-mode-btn" onclick="toggleManagerLock()" class="px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100">
                     <span id="manager-lock-icon">🔒</span>
                     <span id="manager-lock-text">Staff Mode</span>
                 </button>
 
-                <!-- Status indicator -->
                 <div id="sync-status" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-600">
                     <span class="w-2.5 h-2.5 rounded-full bg-slate-400 block" id="sync-indicator-dot"></span>
                     <span id="sync-status-text">Disconnected</span>
                 </div>
 
-                <!-- Action Buttons -->
-               <button onclick="openArchiveModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1 border border-slate-200">
-    📦 Archive List
-</button>
-<button onclick="openSyncModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1 border border-slate-200">
-    ⚙️ Settings
-</button>
+                <button onclick="openArchiveModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1 border border-slate-200">
+                    📦 Archive List
+                </button>
+                <button onclick="openSyncModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1 border border-slate-200">
+                    ⚙️ Settings
+                </button>
+            </div>
+        </div>
+    </nav>
 
-    <!-- Main Workspace Container -->
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
         
-        <!-- Filter & Actions Bar -->
         <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3">
                 <span class="text-2xl">🎯</span>
@@ -102,9 +95,7 @@
             </div>
         </div>
 
-        <!-- Visual Dashboard (Analyzes Workload Capacity and Bottlenecks) -->
         <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Active Workload (Not Results) to prevent overallocation -->
             <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
                 <div class="mb-3">
                     <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Active Task Allocation</h3>
@@ -115,7 +106,6 @@
                 </div>
             </div>
 
-            <!-- Operational Pipeline Health -->
             <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
                 <div class="mb-3">
                     <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Pipeline Velocity</h3>
@@ -127,7 +117,6 @@
             </div>
         </section>
 
-        <!-- Kanban Interactive Grid -->
         <section class="space-y-4">
             <div class="flex justify-between items-center">
                 <div>
@@ -144,7 +133,6 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 overflow-x-auto pb-4 custom-scrollbar">
                 
-                <!-- Backlog -->
                 <div class="bg-slate-100 rounded-xl p-3 border border-slate-200 flex flex-col min-w-[220px]">
                     <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
                         <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
@@ -155,7 +143,6 @@
                     <div id="col-backlog" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'backlog')" class="kanban-column space-y-3 flex-grow rounded-lg p-1"></div>
                 </div>
 
-                <!-- Up Next -->
                 <div class="bg-slate-100 rounded-xl p-3 border border-slate-200 flex flex-col min-w-[220px]">
                     <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
                         <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
@@ -166,7 +153,6 @@
                     <div id="col-upnext" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'upnext')" class="kanban-column space-y-3 flex-grow rounded-lg p-1"></div>
                 </div>
 
-                <!-- In Progress -->
                 <div class="bg-slate-100 rounded-xl p-3 border border-slate-200 flex flex-col min-w-[220px]">
                     <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
                         <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
@@ -177,7 +163,6 @@
                     <div id="col-inprogress" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'inprogress')" class="kanban-column space-y-3 flex-grow rounded-lg p-1"></div>
                 </div>
 
-                <!-- Review / Approval -->
                 <div class="bg-slate-100 rounded-xl p-3 border border-slate-200 flex flex-col min-w-[220px]">
                     <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
                         <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
@@ -188,9 +173,7 @@
                     <div id="col-review" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'review')" class="kanban-column space-y-3 flex-grow rounded-lg p-1"></div>
                 </div>
 
-                <!-- Live / Done -->
                 <div class="bg-slate-50 rounded-xl p-3 border border-dashed border-slate-300 flex flex-col min-w-[220px] relative">
-                    <!-- Overlaid Lock Guard Graphic if locked -->
                     <div id="done-lock-overlay" class="absolute inset-0 bg-slate-900/5 backdrop-blur-[0.5px] rounded-xl flex flex-col items-center justify-center p-4 text-center select-none pointer-events-none z-10 transition-opacity duration-200">
                         <span class="text-lg">🔒</span>
                         <span class="text-[9px] font-bold text-slate-500 uppercase tracking-wider mt-1">Manager Only Area</span>
@@ -209,9 +192,6 @@
         </section>
     </main>
 
-    <!-- Custom Dialog Elements (Avoiding Native Window Alert/Confirm) -->
-    
-    <!-- Custom Confirm Modal -->
     <div id="customConfirmModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
             <h4 class="text-md font-bold text-slate-900" id="confirmTitle">Are you sure?</h4>
@@ -223,7 +203,6 @@
         </div>
     </div>
 
-    <!-- Manager Password Verification Modal -->
     <div id="managerAuthModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-xs p-6 space-y-4">
             <div class="text-center">
@@ -239,7 +218,6 @@
         </div>
     </div>
 
-    <!-- Notification Toast -->
     <div id="toastNotification" class="fixed bottom-6 right-6 z-[120] transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
         <div id="toastContent" class="bg-slate-900 text-white px-5 py-3.5 rounded-xl shadow-lg text-xs font-medium flex items-center gap-2.5 max-w-sm">
             <span id="toastIcon">✨</span>
@@ -247,7 +225,6 @@
         </div>
     </div>
 
-    <!-- Sync Settings Modal -->
     <div id="syncSettingsModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
         <div class="bg-white rounded-3xl shadow-xl w-full max-w-md overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
@@ -271,10 +248,8 @@
                     </label>
                 </div>
 
-                <!-- Passcode config block (Only editable when inside Manager Mode) -->
                 <div id="passcode-config-wrapper" class="p-3 bg-amber-50 border border-amber-100 rounded-xl">
-                    <!-- Text warning loaded here if locked, or password input if unlocked -->
-                </div>
+                    </div>
 
                 <div class="pt-2 flex gap-2">
                     <button onclick="closeSyncModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-lg text-xs transition">Cancel</button>
@@ -284,7 +259,6 @@
         </div>
     </div>
 
-    <!-- Archived Tasks Inventory Modal -->
     <div id="archiveInventoryModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
         <div class="bg-white rounded-3xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col h-[600px]">
             <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
@@ -296,8 +270,7 @@
             </div>
             
             <div class="flex-1 overflow-y-auto p-6 space-y-3 custom-scrollbar" id="archiveListContainer">
-                <!-- Archived task items will be injected here -->
-            </div>
+                </div>
             
             <div class="px-6 py-4 border-t border-slate-100 flex justify-between bg-slate-50">
                 <p class="text-[10px] text-slate-400 flex items-center">📦 Archiving runs continuously on action checks.</p>
@@ -306,7 +279,6 @@
         </div>
     </div>
 
-    <!-- Task Creation/Editing Modal -->
     <div id="taskModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
         <div class="bg-white rounded-3xl shadow-xl w-full max-w-md overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
@@ -346,7 +318,6 @@
                     </div>
                 </div>
 
-                <!-- Nested Sub-Channel Selector (For Campaigns and Content Writing) -->
                 <div id="subChannelWrapper" class="hidden">
                     <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Sub-Channel Option</label>
                     <select id="taskSubChannel" onchange="handleSubChannelSelectionChange()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
@@ -358,7 +329,6 @@
                     </select>
                 </div>
 
-                <!-- WhatsApp Type Selector (Conditional to WhatsApp selection) -->
                 <div id="whatsAppTypeWrapper" class="hidden">
                     <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">WhatsApp Stream Type</label>
                     <select id="taskWhatsAppType" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
@@ -367,7 +337,6 @@
                     </select>
                 </div>
 
-                <!-- Custom Channel Name Input -->
                 <div id="customChannelWrapper" class="hidden">
                     <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Custom Channel Name</label>
                     <input type="text" id="customChannelInput" placeholder="e.g. Email Marketing" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
@@ -405,9 +374,7 @@
     <script>
         // Global State Configuration
         // =========================================================================
-        // ⚠️ CRITICAL: PASTE YOUR DEPLOYED GOOGLE APPS SCRIPT WEB APP URL HERE!
-        // This makes the board fully automatic for all team members out-of-the-box!
-        const SYSTEM_DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbz_v04z9VvL2XlXm9TzN_Uf6b3D-1pGk8YtY-O-eM9_vP1_O-X-x-y-z/exec"; 
+        const SYSTEM_DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbwe1ed_3q2fa63CAZjOyqi7DMOI26gIqCY0jmG9cveA3jnrMr4kAGZqZBi5Zh1so54E/exec"; 
         // =========================================================================
 
         let tasks = [
@@ -427,7 +394,6 @@
         let pipelineChart = null;
         let confirmPromiseResolver = null;
         let authPromiseResolver = null;
-        let autoPullTimer = null;
 
         // Channel Color Badges
         const BADGE_THEMES = {
@@ -481,20 +447,14 @@
                 }, 500);
             }
 
-            // AUTOMATION: Background polling interval set to every 15 seconds
-            startCloudPolling();
-        });
-
-        // Smart periodic polling
-        function startCloudPolling() {
-            if (autoPullTimer) clearInterval(autoPullTimer);
-            autoPullTimer = setInterval(() => {
-                const url = localStorage.getItem('marketing_hub_gas_url');
-                if (url && isAutoSyncActive()) {
-                    pullFromSheet(true); // Silent background merge
+            // This is the "Automated Heartbeat"
+            // It will check the server for updates every 10 seconds automatically
+            setInterval(() => {
+                if (isAutoSyncActive()) {
+                    pullFromSheet(true); // 'true' means silent (no toast popups)
                 }
-            }, 15000); // 15 seconds
-        }
+            }, 10000); 
+        });
 
         // 12-Hour Archiver Engine
         function runAutomatedArchiver() {
@@ -748,7 +708,6 @@
             if (targetStage === 'done' && !isManagerUnlocked) {
                 showToast("🚫 Staff Mode Lock active. Manager verification required to push into Done stage.", "🔒");
                 return;
-                pushToSheet(true);
             }
             
             const rawId = e.dataTransfer.setData ? e.dataTransfer.getData("text") : e.target.id;
@@ -900,7 +859,6 @@
                 subChannel = document.getElementById('taskSubChannel').value;
                 if (subChannel === 'WhatsApp') {
                     whatsAppType = document.getElementById('taskWhatsAppType').value;
-                    pushToSheet(true);
                 }
             }
 
@@ -1126,13 +1084,11 @@
                 checkConnectionStatus();
                 showToast("⚙️ Sync configurations saved!");
                 pullFromSheet(true); // Initial fetch trigger
-                startCloudPolling(); // Reset loop
             } else {
                 localStorage.removeItem('marketing_hub_gas_url');
                 localStorage.removeItem('marketing_hub_autosync');
                 checkConnectionStatus();
                 showToast("⚠️ Sync configurations cleared", "ℹ️");
-                if (autoPullTimer) clearInterval(autoPullTimer);
             }
 
             // Save new Passcode configuration ONLY if Manager is unlocked and input is loaded
@@ -1162,83 +1118,28 @@
             }
         }
 
-        // Smart Conflict Resolution Pulling Method (with optional silent parameter)
+        // Updated Direct Pull Method 
         function pullFromSheet(isSilent = false) {
             const url = localStorage.getItem('marketing_hub_gas_url');
-            if (!url) {
-                if (!isSilent) {
-                    showToast("Configure your Google Sheet URL first!", "⚠️");
-                    openSyncModal();
-                }
-                return;
-            }
+            if (!url) return;
 
+            // Optional: If manual pull clicked, show loading toast
             if (!isSilent) { showToast("🔄 Fetching latest updates...", "⏳"); }
-            
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) throw new Error("Connection failed");
-                    return response.json();
-                })
-                .then(cloudTasks => {
-                    if (cloudTasks && Array.isArray(cloudTasks)) {
-                        // Restore local deletions log list
-                        const logStr = localStorage.getItem('marketing_tasks_deleted_log') || '[]';
-                        try { deletedTaskIds = JSON.parse(logStr); } catch(e) { deletedTaskIds = []; }
 
-                        // Map and clean cloud records
-                        const normalizedCloud = cloudTasks.map(t => ({
-                            id: t.id ? t.id.toString() : Date.now().toString(),
-                            title: t.title || 'Untitled Task',
-                            assignee: t.assignee || 'Unassigned',
-                            channel: t.channel || 'General',
-                            subChannel: t.subchannel || '',
-                            whatsAppType: t.whatsapptype || '',
-                            priority: t.priority ? t.priority.toLowerCase() : 'medium',
-                            stage: t.stage ? t.stage.toLowerCase() : 'backlog',
-                            lastmodified: t.lastmodified ? t.lastmodified.toString() : "0",
-                            donetimestamp: t.donetimestamp ? t.donetimestamp.toString() : ""
-                        }));
+            // The "?t=" forces the browser to ignore cache
+            const fetchUrl = url.includes("?") ? url + "&t=" + Date.now() : url + "?t=" + Date.now();
 
-                        // Perform Smart Merge based on lastmodified timestamps
-                        const mergedMap = new Map();
-                        
-                        // Push local state items
-                        tasks.forEach(lt => mergedMap.set(lt.id, lt));
-
-                        // Compare with cloud tasks
-                        let hasChanges = false;
-                        normalizedCloud.forEach(ct => {
-                            // If task was deleted locally, ignore cloud record
-                            if (deletedTaskIds.includes(ct.id)) {
-                                return;
-                            }
-
-                            if (!mergedMap.has(ct.id)) {
-                                // Task only exists on cloud, pull it in
-                                mergedMap.set(ct.id, ct);
-                                hasChanges = true;
-                            } else {
-                                // Conflict Resolve: Compare LastModified Timestamps
-                                const localTime = parseInt(mergedMap.get(ct.id).lastmodified) || 0;
-                                const cloudTime = parseInt(ct.lastmodified) || 0;
-                                if (cloudTime > localTime) {
-                                    mergedMap.set(ct.id, ct);
-                                    hasChanges = true;
-                                }
-                            }
-                        });
-
-                        if (hasChanges || tasks.length !== mergedMap.size) {
-                            tasks = Array.from(mergedMap.values());
-                            runAutomatedArchiver();
-                            renderBoard();
-                            if (!isSilent) showToast("☁️ Merge Sync completed successfully!");
-                        }
-                    }
+            fetch(fetchUrl)
+                .then(response => response.json())
+                .then(data => {
+                    // Update local variable directly, falling back to empty array if undefined
+                    tasks = Array.isArray(data) ? data : (data.tasks || []); 
+                    renderBoard(); // Redraws the board with the new data
+                    
+                    if (!isSilent) showToast("Synced with cloud!", "✅");
                 })
                 .catch(err => {
-                    console.error("Polling error:", err);
+                    console.error("Sync pull failed", err);
                     if (!isSilent) {
                         showToast("Sync bridge connection failure.", "❌");
                     }
