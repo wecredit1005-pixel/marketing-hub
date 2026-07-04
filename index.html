@@ -135,9 +135,7 @@
                 
                 <div class="bg-slate-100 rounded-xl p-3 border border-slate-200 flex flex-col min-w-[220px]">
                     <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
-                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
-                            💡 Backlog
-                        </span>
+                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">💡 Backlog</span>
                         <span id="count-backlog" class="bg-slate-200 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
                     </div>
                     <div id="col-backlog" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'backlog')" class="kanban-column space-y-3 flex-grow rounded-lg p-1"></div>
@@ -145,9 +143,7 @@
 
                 <div class="bg-slate-100 rounded-xl p-3 border border-slate-200 flex flex-col min-w-[220px]">
                     <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
-                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
-                            🎯 Up Next
-                        </span>
+                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">🎯 Up Next</span>
                         <span id="count-upnext" class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
                     </div>
                     <div id="col-upnext" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'upnext')" class="kanban-column space-y-3 flex-grow rounded-lg p-1"></div>
@@ -155,9 +151,7 @@
 
                 <div class="bg-slate-100 rounded-xl p-3 border border-slate-200 flex flex-col min-w-[220px]">
                     <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
-                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
-                            ⚡ In Progress
-                        </span>
+                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">⚡ In Progress</span>
                         <span id="count-inprogress" class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
                     </div>
                     <div id="col-inprogress" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'inprogress')" class="kanban-column space-y-3 flex-grow rounded-lg p-1"></div>
@@ -165,9 +159,7 @@
 
                 <div class="bg-slate-100 rounded-xl p-3 border border-slate-200 flex flex-col min-w-[220px]">
                     <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
-                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
-                            👀 Review
-                        </span>
+                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">👀 Review</span>
                         <span id="count-review" class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
                     </div>
                     <div id="col-review" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'review')" class="kanban-column space-y-3 flex-grow rounded-lg p-1"></div>
@@ -180,9 +172,7 @@
                     </div>
                     
                     <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200 relative z-20">
-                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                            ✅ Done
-                        </span>
+                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">✅ Done</span>
                         <span id="count-done" class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
                     </div>
                     <div id="col-done" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'done')" class="kanban-column space-y-3 flex-grow rounded-lg p-1 relative z-20"></div>
@@ -248,8 +238,7 @@
                     </label>
                 </div>
 
-                <div id="passcode-config-wrapper" class="p-3 bg-amber-50 border border-amber-100 rounded-xl">
-                    </div>
+                <div id="passcode-config-wrapper" class="p-3 bg-amber-50 border border-amber-100 rounded-xl"></div>
 
                 <div class="pt-2 flex gap-2">
                     <button onclick="closeSyncModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-lg text-xs transition">Cancel</button>
@@ -269,8 +258,7 @@
                 <button onclick="closeArchiveModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
             </div>
             
-            <div class="flex-1 overflow-y-auto p-6 space-y-3 custom-scrollbar" id="archiveListContainer">
-                </div>
+            <div class="flex-1 overflow-y-auto p-6 space-y-3 custom-scrollbar" id="archiveListContainer"></div>
             
             <div class="px-6 py-4 border-t border-slate-100 flex justify-between bg-slate-50">
                 <p class="text-[10px] text-slate-400 flex items-center">📦 Archiving runs continuously on action checks.</p>
@@ -373,20 +361,17 @@
 
     <script>
         // Global State Configuration
-        // =========================================================================
-        const SYSTEM_DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbwcvW_ScnWJarI4ruDVQcgIHe8xyNDW6P_tlQzqzn1zp6-CwF624MUqoNtRVtkZWMss/exec"; 
-        // =========================================================================
+        const SYSTEM_DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbzjJCRvDB-m4LyH9-Ndpqnwkpqv0rYJ8pVDu4S7D2c_DU3REpSZKAkbIuGfghA-4VwA/exec"; 
 
         let tasks = [
-            { id: "1001", title: "Technical audit SEO standard SOP draft", assignee: "Vivek Vishal", channel: "SEO", subChannel: "", whatsAppType: "", priority: "high", stage: "review", lastmodified: Date.now().toString(), donetimestamp: "" },
-            { id: "1002", title: "Instagram assets layout template generation", assignee: "Anchal Sharma", channel: "Graphic Design", subChannel: "", whatsAppType: "", priority: "medium", stage: "inprogress", lastmodified: Date.now().toString(), donetimestamp: "" },
-            { id: "1003", title: "Draft copywriting outline for product newsletter", assignee: "Ankit Kumar", channel: "Content Writing", subChannel: "SMS", whatsAppType: "", priority: "medium", stage: "upnext", lastmodified: Date.now().toString(), donetimestamp: "" },
-            { id: "1004", title: "Deploy FB programmatic audience filters", assignee: "Tushar Kumar", channel: "Campaigns", subChannel: "WhatsApp", whatsAppType: "WhatsApp Marketing", priority: "high", stage: "inprogress", lastmodified: Date.now().toString(), donetimestamp: "" },
-            { id: "1005", title: "Schedule social media calendar posts for July", assignee: "Riya Mishra", channel: "Social Media", subChannel: "", whatsAppType: "", priority: "low", stage: "backlog", lastmodified: Date.now().toString(), donetimestamp: "" }
+            { id: "1001", title: "Technical audit SEO standard SOP draft", assignee: "Vivek Vishal", channel: "SEO", subChannel: "", whatsAppType: "", priority: "high", stage: "review", lastmodified: Date.now().toString(), donetimestamp: "", isDeleted: false },
+            { id: "1002", title: "Instagram assets layout template generation", assignee: "Anchal Sharma", channel: "Graphic Design", subChannel: "", whatsAppType: "", priority: "medium", stage: "inprogress", lastmodified: Date.now().toString(), donetimestamp: "", isDeleted: false },
+            { id: "1003", title: "Draft copywriting outline for product newsletter", assignee: "Ankit Kumar", channel: "Content Writing", subChannel: "SMS", whatsAppType: "", priority: "medium", stage: "upnext", lastmodified: Date.now().toString(), donetimestamp: "", isDeleted: false },
+            { id: "1004", title: "Deploy FB programmatic audience filters", assignee: "Tushar Kumar", channel: "Campaigns", subChannel: "WhatsApp", whatsAppType: "WhatsApp Marketing", priority: "high", stage: "inprogress", lastmodified: Date.now().toString(), donetimestamp: "", isDeleted: false },
+            { id: "1005", title: "Schedule social media calendar posts for July", assignee: "Riya Mishra", channel: "Social Media", subChannel: "", whatsAppType: "", priority: "low", stage: "backlog", lastmodified: Date.now().toString(), donetimestamp: "", isDeleted: false }
         ];
 
         let archivedTasks = [];
-        let deletedTaskIds = []; // Track deletion sessions to prevent cloud merge conflicts
         let isManagerUnlocked = false;
         let managerPin = "1234";
 
@@ -395,7 +380,6 @@
         let confirmPromiseResolver = null;
         let authPromiseResolver = null;
 
-        // Channel Color Badges
         const BADGE_THEMES = {
             "Social Media": "bg-pink-50 border-pink-200 text-pink-700",
             "Graphic Design": "bg-purple-50 border-purple-200 text-purple-700",
@@ -405,28 +389,25 @@
         };
 
         window.addEventListener('DOMContentLoaded', () => {
-            // Check if default system URL is configured and write it as default fallback
             const savedUrl = localStorage.getItem('marketing_hub_gas_url');
             if (!savedUrl && SYSTEM_DEFAULT_GAS_URL && !SYSTEM_DEFAULT_GAS_URL.includes("x-y-z")) {
                 localStorage.setItem('marketing_hub_gas_url', SYSTEM_DEFAULT_GAS_URL);
                 localStorage.setItem('marketing_hub_autosync', 'true');
             }
 
-            // Restore from Cache Storage
-            const localTasks = localStorage.getItem('marketing_tasks_backup_v3');
+            const localTasks = localStorage.getItem('marketing_tasks_backup_v4');
             if (localTasks) {
-                try { tasks = JSON.parse(localTasks); } catch(e) { console.error("Restore mismatch, keeping defaults."); }
+                try { tasks = JSON.parse(localTasks); } catch(e) { console.error("Restore mismatch"); }
             }
             
-            const localArchive = localStorage.getItem('marketing_tasks_archive_v3');
+            const localArchive = localStorage.getItem('marketing_tasks_archive_v4');
             if (localArchive) {
-                try { archivedTasks = JSON.parse(localArchive); } catch(e) { console.error("Archive restore issue."); }
+                try { archivedTasks = JSON.parse(localArchive); } catch(e) { console.error("Archive mismatch"); }
             }
 
             const savedPin = localStorage.getItem('marketing_hub_manager_pin');
             if (savedPin) { managerPin = savedPin; }
 
-            // Default auto-sync to enabled if sheets URL exists
             const hasUrlSetting = localStorage.getItem('marketing_hub_gas_url');
             if (hasUrlSetting && localStorage.getItem('marketing_hub_autosync') === null) {
                 localStorage.setItem('marketing_hub_autosync', 'true');
@@ -437,60 +418,130 @@
 
             checkConnectionStatus();
             initCharts();
-            runAutomatedArchiver(); // Run check instantly on load
+            runAutomatedArchiver(); 
             renderBoard();
 
-            // AUTOMATION: Silently fetch latest cloud updates on initialization
             if (hasUrlSetting) {
-                setTimeout(() => {
-                    pullFromSheet(true);
-                }, 500);
+                setTimeout(() => { pullFromSheet(true); }, 500);
             }
 
-            // This is the "Automated Heartbeat"
-            // It will check the server for updates every 10 seconds automatically
+            // Automated Heartbeat
             setInterval(() => {
-                if (isAutoSyncActive()) {
-                    pullFromSheet(true); // 'true' means silent (no toast popups)
-                }
+                if (isAutoSyncActive()) { pullFromSheet(true); }
             }, 10000); 
         });
 
-        // 12-Hour Archiver Engine
+        // ============================================================================
+        // CORE SYNC ENGINE (Pull-Merge-Push)
+        // ============================================================================
+        
+        function mergeTaskArrays(localTasks, cloudTasks) {
+            const map = new Map();
+            localTasks.forEach(t => map.set(t.id, t));
+            
+            cloudTasks.forEach(ct => {
+                if (!map.has(ct.id)) {
+                    map.set(ct.id, ct);
+                } else {
+                    const localTime = parseInt(map.get(ct.id).lastmodified) || 0;
+                    const cloudTime = parseInt(ct.lastmodified) || 0;
+                    if (cloudTime > localTime) { map.set(ct.id, ct); }
+                }
+            });
+            return Array.from(map.values());
+        }
+
+        async function pullFromSheet(isSilent = false) {
+            const url = localStorage.getItem('marketing_hub_gas_url');
+            if (!url) return;
+
+            if (!isSilent) showToast("🔄 Fetching latest updates...", "⏳");
+            const fetchUrl = url.includes("?") ? url + "&t=" + Date.now() : url + "?t=" + Date.now();
+
+            try {
+                const response = await fetch(fetchUrl);
+                const data = await response.json();
+                const cloudTasks = Array.isArray(data) ? data : (data.tasks || []);
+                
+                tasks = mergeTaskArrays(tasks, cloudTasks);
+                renderBoard();
+                
+                if (!isSilent) showToast("Synced with cloud!", "✅");
+            } catch (err) {
+                console.error("Sync pull failed", err);
+                if (!isSilent) showToast("Sync bridge connection failure.", "❌");
+            }
+        }
+
+        async function pushLocalChange(isSilent = false) {
+            const url = localStorage.getItem('marketing_hub_gas_url');
+            if (!url) {
+                if (!isSilent) {
+                    showToast("Configure your Google Sheet URL first!", "⚠️");
+                    openSyncModal();
+                }
+                return;
+            }
+
+            if (!isSilent) showToast("📤 Synchronizing to cloud...", "⏳");
+
+            try {
+                // 1. Pre-flight fetch to prevent overwriting others' data
+                const fetchUrl = url.includes("?") ? url + "&t=" + Date.now() : url + "?t=" + Date.now();
+                const response = await fetch(fetchUrl);
+                const data = await response.json();
+                const cloudTasks = Array.isArray(data) ? data : (data.tasks || []);
+
+                // 2. Merge our local dirty state with the fresh cloud state
+                tasks = mergeTaskArrays(tasks, cloudTasks);
+                renderBoard(); // Render any new things that came in during merge
+
+                // 3. Now push the safely merged state
+                await fetch(url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tasks: tasks })
+                });
+
+                if (!isSilent) showToast("☁️ Cloud updated securely!", "✅");
+            } catch (err) {
+                console.error("Cloud push failed", err);
+                if (!isSilent) showToast("Cloud push failed.", "❌");
+            }
+        }
+
+        // ============================================================================
+
         function runAutomatedArchiver() {
             const now = Date.now();
-            const twelveHours = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
+            const twelveHours = 12 * 60 * 60 * 1000; 
             let madeArchiveChanges = false;
 
             tasks = tasks.filter(task => {
+                if (task.isDeleted) return true; // Keep soft-deleted items for syncing
+
                 if (task.stage === 'done' && task.donetimestamp) {
                     const doneTime = parseInt(task.donetimestamp);
                     if (now - doneTime >= twelveHours) {
-                        archivedTasks.push({
-                            ...task,
-                            archivedAt: now
-                        });
+                        archivedTasks.push({ ...task, archivedAt: now });
                         madeArchiveChanges = true;
-                        return false; // Remove from active board
+                        return false; 
                     }
                 }
                 return true;
             });
 
             if (madeArchiveChanges) {
-                localStorage.setItem('marketing_tasks_backup_v3', JSON.stringify(tasks));
-                localStorage.setItem('marketing_tasks_archive_v3', JSON.stringify(archivedTasks));
+                localStorage.setItem('marketing_tasks_backup_v4', JSON.stringify(tasks));
+                localStorage.setItem('marketing_tasks_archive_v4', JSON.stringify(archivedTasks));
                 showToast("📦 Tasks in Done longer than 12 hours archived successfully", "📦");
-                if (isAutoSyncActive()) {
-                    pushToSheet(true); // Silent push background sync
-                }
+                if (isAutoSyncActive()) pushLocalChange(true);
             }
         }
 
-        // Custom Security Lock controllers
         function toggleManagerLock() {
             if (isManagerUnlocked) {
-                // Lock instantly
                 isManagerUnlocked = false;
                 document.getElementById('manager-lock-icon').innerText = "🔒";
                 document.getElementById('manager-lock-text').innerText = "Staff Mode";
@@ -501,7 +552,6 @@
                 showToast("🔒 Secure Staff Mode active", "🔒");
                 renderBoard();
             } else {
-                // Open auth verification window
                 openManagerAuth();
             }
         }
@@ -512,9 +562,7 @@
             document.getElementById('managerAuthModal').classList.add('flex');
             document.getElementById('managerPinInput').focus();
             
-            return new Promise((resolve) => {
-                authPromiseResolver = resolve;
-            });
+            return new Promise((resolve) => { authPromiseResolver = resolve; });
         }
 
         function closeManagerAuth(success) {
@@ -529,9 +577,7 @@
                     document.getElementById('manager-lock-text').innerText = "Manager Mode";
                     document.getElementById('board-role-badge').innerText = "Manager Mode: Full control active";
                     document.getElementById('done-lock-overlay').classList.add('opacity-0');
-                    setTimeout(() => {
-                        document.getElementById('done-lock-overlay').classList.remove('flex');
-                    }, 200);
+                    setTimeout(() => { document.getElementById('done-lock-overlay').classList.remove('flex'); }, 200);
                     document.getElementById('stage-done-option').disabled = false;
                     showToast("🔓 Manager privileges granted!", "🔑");
                     renderBoard();
@@ -541,7 +587,6 @@
             }
         }
 
-        // Charts configuration
         function initCharts() {
             const ctxWorkload = document.getElementById('workloadChart').getContext('2d');
             workloadChart = new Chart(ctxWorkload, {
@@ -583,17 +628,11 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     cutout: '72%',
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                            labels: { boxWidth: 8, font: { size: 10 } }
-                        }
-                    }
+                    plugins: { legend: { position: 'right', labels: { boxWidth: 8, font: { size: 10 } } } }
                 }
             });
         }
 
-        // Core Renderer
         function renderBoard() {
             const filterValue = document.getElementById('memberFilter').value;
             const columns = ['backlog', 'upnext', 'inprogress', 'review', 'done'];
@@ -602,13 +641,13 @@
                 const colContainer = document.getElementById(`col-${col}`);
                 colContainer.innerHTML = '';
 
-                const filtered = tasks.filter(t => t.stage === col && (filterValue === 'All' || t.assignee === filterValue));
+                // Filter out soft-deleted items during render
+                const filtered = tasks.filter(t => !t.isDeleted && t.stage === col && (filterValue === 'All' || t.assignee === filterValue));
                 document.getElementById(`count-${col}`).innerText = filtered.length;
 
                 filtered.forEach(task => {
                     const card = document.createElement('div');
                     card.className = "bg-white p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:shadow-md transition duration-150 cursor-grab active:cursor-grabbing relative group shadow-sm animate-in fade-in zoom-in-95 duration-150";
-                    
                     card.draggable = true;
                     card.id = `task-${task.id}`;
                     card.ondragstart = drag;
@@ -617,14 +656,9 @@
                     const badgeTheme = BADGE_THEMES[task.channel] || 'bg-slate-50 border-slate-200 text-slate-600 border';
                     const priorityDot = task.priority === 'high' ? 'bg-red-500' : task.priority === 'medium' ? 'bg-amber-400' : 'bg-emerald-400';
 
-                    // Formulate Channel Label Tag based on nested setup
                     let displayChannel = task.channel;
                     if (task.subChannel) {
-                        if (task.subChannel === 'WhatsApp' && task.whatsAppType) {
-                            displayChannel += ` > ${task.whatsAppType}`;
-                        } else {
-                            displayChannel += ` > ${task.subChannel}`;
-                        }
+                        displayChannel += (task.subChannel === 'WhatsApp' && task.whatsAppType) ? ` > ${task.whatsAppType}` : ` > ${task.subChannel}`;
                     }
 
                     card.innerHTML = `
@@ -636,9 +670,7 @@
                                     <span class="text-[9px] font-bold uppercase text-slate-400">${task.priority}</span>
                                 </div>
                             </div>
-                            
                             <h4 class="text-xs font-bold text-slate-900 leading-snug group-hover:text-indigo-600 transition duration-150">${task.title}</h4>
-                            
                             <div class="flex items-center justify-between pt-2 border-t border-slate-100">
                                 <div class="flex items-center gap-1.5 min-w-0">
                                     <div class="w-5 h-5 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-[10px] text-slate-600 shrink-0">
@@ -656,28 +688,21 @@
                 });
             });
 
-            // Auto lock graphic check
             if (!isManagerUnlocked) {
-                document.getElementById('done-lock-overlay').classList.remove('hidden');
-                document.getElementById('done-lock-overlay').classList.remove('opacity-0');
+                document.getElementById('done-lock-overlay').classList.remove('hidden', 'opacity-0');
                 document.getElementById('done-lock-overlay').classList.add('flex');
             }
 
-            // Sync with memory
-            localStorage.setItem('marketing_tasks_backup_v3', JSON.stringify(tasks));
+            localStorage.setItem('marketing_tasks_backup_v4', JSON.stringify(tasks));
             updateCharts();
         }
 
         function updateCharts() {
             if (!workloadChart || !pipelineChart) return;
-
-            const members = ['Riya Mishra', 'Anchal Sharma', 'Ankit Kumar', 'Ritu Chola', 'Tushar Kumar', 'Vivek Vishal'];
             const workloads = { 'Riya Mishra': 0, 'Anchal Sharma': 0, 'Ankit Kumar': 0, 'Ritu Chola': 0, 'Tushar Kumar': 0, 'Vivek Vishal': 0 };
 
             tasks.forEach(t => {
-                if (t.stage !== 'done' && workloads.hasOwnProperty(t.assignee)) {
-                    workloads[t.assignee]++;
-                }
+                if (!t.isDeleted && t.stage !== 'done' && workloads.hasOwnProperty(t.assignee)) { workloads[t.assignee]++; }
             });
 
             workloadChart.data.labels = Object.keys(workloads).map(name => name.split(' ')[0]);
@@ -686,9 +711,7 @@
 
             const pipeline = { backlog: 0, upnext: 0, inprogress: 0, review: 0, done: 0 };
             tasks.forEach(t => {
-                if (pipeline.hasOwnProperty(t.stage)) {
-                    pipeline[t.stage]++;
-                }
+                if (!t.isDeleted && pipeline.hasOwnProperty(t.stage)) { pipeline[t.stage]++; }
             });
 
             pipelineChart.data.datasets[0].data = Object.values(pipeline);
@@ -710,9 +733,8 @@
                 return;
             }
             
-            // Simplifed and hardened ID extraction
             let rawId = e.dataTransfer.getData("text");
-            if (!rawId) return; // Prevent empty drops
+            if (!rawId) return; 
             
             const taskId = rawId.replace('task-', '');
             const targetTask = tasks.find(t => t.id === taskId);
@@ -727,23 +749,19 @@
                 targetTask.lastmodified = Date.now().toString();
                 targetTask.donetimestamp = (targetStage === 'done') ? Date.now().toString() : "";
 
-                renderBoard();
+                renderBoard(); // Optimistic render
                 showToast(`⚡ Task stage updated to ${targetStage}`);
                 
-                if (isAutoSyncActive()) {
-                    pushToSheet(true);
-                }
+                if (isAutoSyncActive()) pushLocalChange(true);
             }
         }
 
-        // Settings / Custom Modal Controllers
         function handleChannelSelectionChange() {
             const channel = document.getElementById('taskChannel').value;
             const customWrapper = document.getElementById('customChannelWrapper');
             const subChannelWrapper = document.getElementById('subChannelWrapper');
             const whatsAppTypeWrapper = document.getElementById('whatsAppTypeWrapper');
 
-            // Reset visibilities
             customWrapper.classList.add('hidden');
             subChannelWrapper.classList.add('hidden');
             whatsAppTypeWrapper.classList.add('hidden');
@@ -765,7 +783,6 @@
         function handleSubChannelSelectionChange() {
             const subChannel = document.getElementById('taskSubChannel').value;
             const whatsAppTypeWrapper = document.getElementById('whatsAppTypeWrapper');
-
             if (subChannel === 'WhatsApp') {
                 whatsAppTypeWrapper.classList.remove('hidden');
                 document.getElementById('taskWhatsAppType').required = true;
@@ -779,13 +796,8 @@
             document.getElementById('modalTitle').innerText = "Create New Task";
             document.getElementById('taskForm').reset();
             document.getElementById('taskId').value = '';
-            
-            // Re-trigger hidden states resets
             handleChannelSelectionChange();
-
-            // Limit Done selection option unless unlocked
             document.getElementById('stage-done-option').disabled = !isManagerUnlocked;
-
             document.getElementById('taskModal').classList.remove('hidden');
             document.getElementById('taskModal').classList.add('flex');
         }
@@ -794,7 +806,6 @@
             const task = tasks.find(t => t.id === id);
             if (!task) return;
 
-            // Restrict done editing access
             if (task.stage === 'done' && !isManagerUnlocked) {
                 showToast("🔒 Tasks in Done stage are locked and require Manager Mode to edit details.", "🔒");
                 return;
@@ -812,13 +823,11 @@
                 document.getElementById('taskChannel').value = "Other";
             }
 
-            // Sync dynamic wrappers values
             handleChannelSelectionChange();
 
             if (task.channel === 'Campaigns' || task.channel === 'Content Writing') {
                 document.getElementById('taskSubChannel').value = task.subChannel || "";
                 handleSubChannelSelectionChange();
-                
                 if (task.subChannel === 'WhatsApp') {
                     document.getElementById('taskWhatsAppType').value = task.whatsAppType || "WhatsApp Utility";
                 }
@@ -853,9 +862,7 @@
                 channel = document.getElementById('customChannelInput').value.trim() || 'Other';
             } else if (channel === 'Campaigns' || channel === 'Content Writing') {
                 subChannel = document.getElementById('taskSubChannel').value;
-                if (subChannel === 'WhatsApp') {
-                    whatsAppType = document.getElementById('taskWhatsAppType').value;
-                }
+                if (subChannel === 'WhatsApp') whatsAppType = document.getElementById('taskWhatsAppType').value;
             }
 
             const priority = document.getElementById('taskPriority').value;
@@ -867,60 +874,49 @@
             }
 
             if (id) {
-                // Editing existing
                 const idx = tasks.findIndex(t => t.id === id);
                 if (idx !== -1) {
                     const originalStage = tasks[idx].stage;
                     const doneStamp = (stage === 'done') ? (originalStage === 'done' ? tasks[idx].donetimestamp : Date.now().toString()) : "";
-
                     tasks[idx] = { 
                         id, title, assignee, channel, subChannel, whatsAppType, priority, stage, 
                         lastmodified: Date.now().toString(),
-                        donetimestamp: doneStamp 
+                        donetimestamp: doneStamp,
+                        isDeleted: false
                     };
                     showToast("✏️ Task updated successfully");
                 }
             } else {
-                // Creating new
-                const newTask = {
-                    id: Date.now().toString(),
-                    title, assignee, channel, subChannel, whatsAppType, priority, stage,
+                tasks.push({
+                    id: Date.now().toString(), title, assignee, channel, subChannel, whatsAppType, priority, stage,
                     lastmodified: Date.now().toString(),
-                    donetimestamp: (stage === 'done') ? Date.now().toString() : ""
-                };
-                tasks.push(newTask);
+                    donetimestamp: (stage === 'done') ? Date.now().toString() : "",
+                    isDeleted: false
+                });
                 showToast("🎉 New task created");
             }
 
             closeTaskModal();
-            runAutomatedArchiver(); // Run check in case newly set task immediately fulfills archive limits
-            renderBoard();
-            
-            if (isAutoSyncActive()) {
-                pushToSheet(true);
-            }
+            runAutomatedArchiver(); 
+            renderBoard(); 
+            if (isAutoSyncActive()) pushLocalChange(true);
         }
 
-        // Custom Delete & Confirm Modal logic
         function triggerDelete(e, id) {
             e.stopPropagation();
             showConfirmModal("Confirm Deletion", "Are you sure you want to permanently delete this task?")
                 .then(confirmed => {
                     if (confirmed) {
-                        // Remove from local array
-                        tasks = tasks.filter(t => t.id !== id);
-                        
-                        // Log deletion to prevent cloud ghosting on the next polling cycle
-                        if (!deletedTaskIds.includes(id.toString())) {
-                            deletedTaskIds.push(id.toString());
-                            localStorage.setItem('marketing_tasks_deleted_log', JSON.stringify(deletedTaskIds));
-                        }
-                        
-                        renderBoard();
-                        showToast("🗑️ Task has been deleted");
-                        
-                        if (isAutoSyncActive()) {
-                            pushToSheet(true);
+                        const task = tasks.find(t => t.id === id);
+                        if (task) {
+                            // Soft Delete Flag
+                            task.isDeleted = true;
+                            task.lastmodified = Date.now().toString();
+                            
+                            renderBoard(); // Optimistic Render
+                            showToast("🗑️ Task has been deleted");
+                            
+                            if (isAutoSyncActive()) pushLocalChange(true);
                         }
                     }
                 });
@@ -931,10 +927,7 @@
             document.getElementById('confirmText').innerText = text;
             document.getElementById('customConfirmModal').classList.remove('hidden');
             document.getElementById('customConfirmModal').classList.add('flex');
-            
-            return new Promise((resolve) => {
-                confirmPromiseResolver = resolve;
-            });
+            return new Promise((resolve) => { confirmPromiseResolver = resolve; });
         }
 
         function closeConfirmModal(outcome) {
@@ -943,22 +936,18 @@
             if (confirmPromiseResolver) { confirmPromiseResolver(outcome); }
         }
 
-        // Toast Engine
         function showToast(message, icon = "✅") {
             const toast = document.getElementById('toastNotification');
             document.getElementById('toastMessage').innerText = message;
             document.getElementById('toastIcon').innerText = icon;
-
             toast.classList.remove('translate-y-20', 'opacity-0');
             toast.classList.add('translate-y-0', 'opacity-100');
-
             setTimeout(() => {
                 toast.classList.add('translate-y-20', 'opacity-0');
                 toast.classList.remove('translate-y-0', 'opacity-100');
             }, 3000);
         }
 
-        // Archive Modal Actions
         function openArchiveModal() {
             renderArchiveList();
             document.getElementById('archiveInventoryModal').classList.remove('hidden');
@@ -990,7 +979,6 @@
                 archiveCard.className = "p-4 rounded-xl border border-slate-200 bg-slate-50 flex justify-between items-center animate-in fade-in zoom-in-95 duration-150";
                 
                 const archiveDateStr = task.archivedAt ? new Date(task.archivedAt).toLocaleString() : 'N/A';
-
                 let displayChan = task.channel;
                 if (task.subChannel) {
                     displayChan += ` > ${task.subChannel}`;
@@ -1018,33 +1006,28 @@
 
         function restoreFromArchive(idx) {
             const restoredTask = archivedTasks[idx];
-            
-            // Set restored stage back to Review so manager must confirm complete or move it elsewhere
             restoredTask.stage = "review";
             restoredTask.donetimestamp = "";
             restoredTask.lastmodified = Date.now().toString();
+            restoredTask.isDeleted = false; // Security check for restoration
 
-            // Insert back to active array
             tasks.push(restoredTask);
             archivedTasks.splice(idx, 1);
 
-            localStorage.setItem('marketing_tasks_backup_v3', JSON.stringify(tasks));
-            localStorage.setItem('marketing_tasks_archive_v3', JSON.stringify(archivedTasks));
+            localStorage.setItem('marketing_tasks_backup_v4', JSON.stringify(tasks));
+            localStorage.setItem('marketing_tasks_archive_v4', JSON.stringify(archivedTasks));
 
             renderBoard();
             renderArchiveList();
             showToast("📦 Task successfully restored back to board", "⚡");
 
-            if (isAutoSyncActive()) {
-                pushToSheet(true);
-            }
+            if (isAutoSyncActive()) pushLocalChange(true);
         }
 
         function openSyncModal() {
             const savedUrl = localStorage.getItem('marketing_hub_gas_url') || '';
             document.getElementById('sheetUrlInput').value = savedUrl;
             
-            // Build Passcode settings input based on current authorization role
             const passcodeContainer = document.getElementById('passcode-config-wrapper');
             if (isManagerUnlocked) {
                 passcodeContainer.innerHTML = `
@@ -1061,7 +1044,6 @@
                     <p class="text-[10px] text-amber-600 mt-1">Passcode configurations are hidden. You must unlock <strong>Manager Mode</strong> from the main toolbar to alter security PINs.</p>
                 `;
             }
-
             document.getElementById('syncSettingsModal').classList.remove('hidden');
             document.getElementById('syncSettingsModal').classList.add('flex');
         }
@@ -1084,7 +1066,7 @@
                 localStorage.setItem('marketing_hub_autosync', isAutoSync ? 'true' : 'false');
                 checkConnectionStatus();
                 showToast("⚙️ Sync configurations saved!");
-                pullFromSheet(true); // Initial fetch trigger
+                pullFromSheet(true); 
             } else {
                 localStorage.removeItem('marketing_hub_gas_url');
                 localStorage.removeItem('marketing_hub_autosync');
@@ -1092,7 +1074,6 @@
                 showToast("⚠️ Sync configurations cleared", "ℹ️");
             }
 
-            // Save new Passcode configuration ONLY if Manager is unlocked and input is loaded
             const configPinInput = document.getElementById('managerPinConfig');
             if (isManagerUnlocked && configPinInput) {
                 const configPin = configPinInput.value.trim();
@@ -1101,7 +1082,6 @@
                     localStorage.setItem('marketing_hub_manager_pin', configPin);
                 }
             }
-
             closeSyncModal();
         }
 
@@ -1117,87 +1097,6 @@
                 dot.className = "w-2.5 h-2.5 rounded-full bg-amber-400 block";
                 text.innerText = "Local-Only Cache";
             }
-        }
-
-        // Updated Direct Pull Method 
-        function pullFromSheet(isSilent = false) {
-            const url = localStorage.getItem('marketing_hub_gas_url');
-            if (!url) return;
-
-            if (!isSilent) showToast("🔄 Fetching latest updates...", "⏳");
-
-            const fetchUrl = url.includes("?") ? url + "&t=" + Date.now() : url + "?t=" + Date.now();
-
-            fetch(fetchUrl)
-                .then(response => response.json())
-                .then(data => {
-                    const cloudTasks = Array.isArray(data) ? data : (data.tasks || []);
-                    
-                    // 1. Fetch our local deletion logs
-                    const logStr = localStorage.getItem('marketing_tasks_deleted_log') || '[]';
-                    let deletedIds = [];
-                    try { deletedIds = JSON.parse(logStr); } catch(e) {}
-
-                    // 2. Map local state to protect our recent changes
-                    const mergedMap = new Map();
-                    tasks.forEach(t => mergedMap.set(t.id, t));
-
-                    // 3. Smart Merge Timestamp Engine
-                    cloudTasks.forEach(ct => {
-                        // If we deleted this locally, completely ignore the cloud version
-                        if (deletedIds.includes(ct.id)) return;
-
-                        if (!mergedMap.has(ct.id)) {
-                            // New task from a teammate, add it
-                            mergedMap.set(ct.id, ct);
-                        } else {
-                            // Conflict! Check which one is newer based on UNIX timestamp
-                            const localTime = parseInt(mergedMap.get(ct.id).lastmodified) || 0;
-                            const cloudTime = parseInt(ct.lastmodified) || 0;
-                            
-                            if (cloudTime > localTime) {
-                                mergedMap.set(ct.id, ct); // Cloud is newer, overwrite local
-                            }
-                        }
-                    });
-
-                    tasks = Array.from(mergedMap.values());
-                    renderBoard(); 
-                    
-                    if (!isSilent) showToast("Synced with cloud!", "✅");
-                })
-                .catch(err => {
-                    console.error("Sync pull failed", err);
-                    if (!isSilent) showToast("Sync bridge connection failure.", "❌");
-                });
-        }
-
-        // Syncing state out
-        function pushToSheet(isSilent = false) {
-            const url = localStorage.getItem('marketing_hub_gas_url');
-            if (!url) {
-                if (!isSilent) {
-                    showToast("Configure your Google Sheet URL first!", "⚠️");
-                    openSyncModal();
-                }
-                return;
-            }
-
-            if (!isSilent) { showToast("📤 Synchronizing to cloud...", "⏳"); }
-
-            fetch(url, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ tasks: tasks })
-            })
-            .then(() => {
-                if (!isSilent) { showToast("☁️ Cloud updated in lockstep!", "✅"); }
-            })
-            .catch(err => {
-                console.error(err);
-                if (!isSilent) { showToast("Cloud push failed.", "❌"); }
-            });
         }
     </script>
 </body>
