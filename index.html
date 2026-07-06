@@ -6,37 +6,16 @@
     <title>Marketing Ops Hub & Kanban</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .kanban-column {
-            min-height: 550px;
-            transition: all 0.2s ease-in-out;
-        }
-        .drag-over {
-            background-color: #f1f5f9;
-            border: 2.5px dashed #6366f1;
-            transform: scale(1.01);
-        }
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            height: 180px;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        .kanban-column { min-height: 550px; transition: all 0.2s ease-in-out; }
+        .drag-over { background-color: #f1f5f9; border: 2.5px dashed #6366f1; transform: scale(1.01); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .chart-container { position: relative; width: 100%; height: 180px; }
     </style>
 </head>
 <body class="h-full flex flex-col overflow-x-hidden text-slate-800">
@@ -47,7 +26,7 @@
                 <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md shadow-indigo-100">M</div>
                 <div>
                     <h1 class="text-md font-bold text-slate-900 leading-none">Marketing Ops Hub</h1>
-                    <p class="text-[11px] text-slate-500 font-medium">Team Workflow & Smart Cloud Sync</p>
+                    <p class="text-[11px] text-slate-500 font-medium">Team Workflow & Multi-User Sync</p>
                 </div>
             </div>
             
@@ -135,9 +114,7 @@
                 
                 <div class="bg-slate-100 rounded-xl p-3 border border-slate-200 flex flex-col min-w-[220px]">
                     <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
-                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
-                            💡 Backlog
-                        </span>
+                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">💡 Backlog</span>
                         <span id="count-backlog" class="bg-slate-200 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
                     </div>
                     <div id="col-backlog" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'backlog')" class="kanban-column space-y-3 flex-grow rounded-lg p-1"></div>
@@ -145,9 +122,7 @@
 
                 <div class="bg-slate-100 rounded-xl p-3 border border-slate-200 flex flex-col min-w-[220px]">
                     <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
-                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
-                            🎯 Up Next
-                        </span>
+                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">🎯 Up Next</span>
                         <span id="count-upnext" class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
                     </div>
                     <div id="col-upnext" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'upnext')" class="kanban-column space-y-3 flex-grow rounded-lg p-1"></div>
@@ -155,9 +130,7 @@
 
                 <div class="bg-slate-100 rounded-xl p-3 border border-slate-200 flex flex-col min-w-[220px]">
                     <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
-                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
-                            ⚡ In Progress
-                        </span>
+                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">⚡ In Progress</span>
                         <span id="count-inprogress" class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
                     </div>
                     <div id="col-inprogress" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'inprogress')" class="kanban-column space-y-3 flex-grow rounded-lg p-1"></div>
@@ -165,9 +138,7 @@
 
                 <div class="bg-slate-100 rounded-xl p-3 border border-slate-200 flex flex-col min-w-[220px]">
                     <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
-                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
-                            👀 Review
-                        </span>
+                        <span class="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">👀 Review</span>
                         <span id="count-review" class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
                     </div>
                     <div id="col-review" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'review')" class="kanban-column space-y-3 flex-grow rounded-lg p-1"></div>
@@ -180,9 +151,7 @@
                     </div>
                     
                     <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200 relative z-20">
-                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                            ✅ Done
-                        </span>
+                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">✅ Done</span>
                         <span id="count-done" class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
                     </div>
                     <div id="col-done" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)" ondrop="drop(event, 'done')" class="kanban-column space-y-3 flex-grow rounded-lg p-1 relative z-20"></div>
@@ -236,7 +205,6 @@
                     <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Apps Script Web App URL</label>
                     <input type="url" id="sheetUrlInput" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
                 </div>
-
                 <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
                     <div>
                         <h4 class="text-xs font-bold text-slate-800">Automatic Backend Syncing</h4>
@@ -247,10 +215,7 @@
                         <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
                     </label>
                 </div>
-
-                <div id="passcode-config-wrapper" class="p-3 bg-amber-50 border border-amber-100 rounded-xl">
-                    </div>
-
+                <div id="passcode-config-wrapper" class="p-3 bg-amber-50 border border-amber-100 rounded-xl"></div>
                 <div class="pt-2 flex gap-2">
                     <button onclick="closeSyncModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-lg text-xs transition">Cancel</button>
                     <button onclick="saveSyncSettings()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg text-xs transition shadow">Save Configuration</button>
@@ -268,10 +233,7 @@
                 </div>
                 <button onclick="closeArchiveModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
             </div>
-            
-            <div class="flex-1 overflow-y-auto p-6 space-y-3 custom-scrollbar" id="archiveListContainer">
-                </div>
-            
+            <div class="flex-1 overflow-y-auto p-6 space-y-3 custom-scrollbar" id="archiveListContainer"></div>
             <div class="px-6 py-4 border-t border-slate-100 flex justify-between bg-slate-50">
                 <p class="text-[10px] text-slate-400 flex items-center">📦 Archiving runs continuously on action checks.</p>
                 <button onclick="closeArchiveModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-4 py-2 rounded-lg transition border border-slate-200">Close</button>
@@ -287,12 +249,10 @@
             </div>
             <form id="taskForm" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4">
                 <input type="hidden" id="taskId">
-                
                 <div>
                     <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Task Summary / Action Title</label>
                     <input type="text" id="taskTitle" required placeholder="e.g. Map SEO Redirect SOP Checklist" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
                 </div>
-
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Assignee</label>
@@ -317,7 +277,6 @@
                         </select>
                     </div>
                 </div>
-
                 <div id="subChannelWrapper" class="hidden">
                     <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Sub-Channel Option</label>
                     <select id="taskSubChannel" onchange="handleSubChannelSelectionChange()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
@@ -328,7 +287,6 @@
                         <option value="WhatsApp">WhatsApp</option>
                     </select>
                 </div>
-
                 <div id="whatsAppTypeWrapper" class="hidden">
                     <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">WhatsApp Stream Type</label>
                     <select id="taskWhatsAppType" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
@@ -336,12 +294,10 @@
                         <option value="WhatsApp Marketing">WhatsApp Marketing</option>
                     </select>
                 </div>
-
                 <div id="customChannelWrapper" class="hidden">
                     <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Custom Channel Name</label>
                     <input type="text" id="customChannelInput" placeholder="e.g. Email Marketing" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
                 </div>
-
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Priority Range</label>
@@ -362,7 +318,6 @@
                         </select>
                     </div>
                 </div>
-
                 <div class="pt-2 flex gap-2">
                     <button type="button" onclick="closeTaskModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-lg text-xs transition">Cancel</button>
                     <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg text-xs transition shadow">Save Task</button>
@@ -372,10 +327,8 @@
     </div>
 
     <script>
-        // Global State Configuration
-        // =========================================================================
-        const SYSTEM_DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbyiavS8wpRgGID4UIFHngRPHroEi5hcBc5HoEWgmxnDSU9TYm8PV1uShkdmkzbl0p4v/exec"; 
-        // =========================================================================
+        // Global Configurations
+        const SYSTEM_DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbyz6ySSWgfWIvxsxETRXazTIrzV38iKIkPQkZJ9ta-MC178fEv1ba8E77med9WI9hBm/exec"; 
 
         let tasks = [
             { id: "1001", title: "Technical audit SEO standard SOP draft", assignee: "Vivek Vishal", channel: "SEO", subChannel: "", whatsAppType: "", priority: "high", stage: "review", lastmodified: Date.now().toString(), donetimestamp: "" },
@@ -386,7 +339,7 @@
         ];
 
         let archivedTasks = [];
-        let deletedTaskIds = []; // Track deletion sessions to prevent cloud merge conflicts
+        let deletedTaskIds = []; 
         let isManagerUnlocked = false;
         let managerPin = "1234";
 
@@ -395,7 +348,6 @@
         let confirmPromiseResolver = null;
         let authPromiseResolver = null;
 
-        // Channel Color Badges
         const BADGE_THEMES = {
             "Social Media": "bg-pink-50 border-pink-200 text-pink-700",
             "Graphic Design": "bg-purple-50 border-purple-200 text-purple-700",
@@ -405,73 +357,54 @@
         };
 
         window.addEventListener('DOMContentLoaded', () => {
-            // Check if default system URL is configured and write it as default fallback
             const savedUrl = localStorage.getItem('marketing_hub_gas_url');
-            if (!savedUrl && SYSTEM_DEFAULT_GAS_URL && !SYSTEM_DEFAULT_GAS_URL.includes("x-y-z")) {
+            if (!savedUrl && SYSTEM_DEFAULT_GAS_URL) {
                 localStorage.setItem('marketing_hub_gas_url', SYSTEM_DEFAULT_GAS_URL);
                 localStorage.setItem('marketing_hub_autosync', 'true');
             }
 
-            // Restore from Cache Storage
             const localTasks = localStorage.getItem('marketing_tasks_backup_v3');
-            if (localTasks) {
-                try { tasks = JSON.parse(localTasks); } catch(e) { console.error("Restore mismatch, keeping defaults."); }
-            }
+            if (localTasks) { try { tasks = JSON.parse(localTasks); } catch(e) {} }
             
             const localArchive = localStorage.getItem('marketing_tasks_archive_v3');
-            if (localArchive) {
-                try { archivedTasks = JSON.parse(localArchive); } catch(e) { console.error("Archive restore issue."); }
-            }
+            if (localArchive) { try { archivedTasks = JSON.parse(localArchive); } catch(e) {} }
 
             const savedPin = localStorage.getItem('marketing_hub_manager_pin');
             if (savedPin) { managerPin = savedPin; }
 
-            // Default auto-sync to enabled if sheets URL exists
-            const hasUrlSetting = localStorage.getItem('marketing_hub_gas_url');
-            if (hasUrlSetting && localStorage.getItem('marketing_hub_autosync') === null) {
-                localStorage.setItem('marketing_hub_autosync', 'true');
-            }
-            
+            const deletedLog = localStorage.getItem('marketing_tasks_deleted_log');
+            if (deletedLog) { try { deletedTaskIds = JSON.parse(deletedLog); } catch(e) {} }
+
             const autoSyncEnabled = localStorage.getItem('marketing_hub_autosync') !== 'false';
             document.getElementById('autoSyncToggle').checked = autoSyncEnabled;
 
             checkConnectionStatus();
             initCharts();
-            runAutomatedArchiver(); // Run check instantly on load
+            runAutomatedArchiver();
             renderBoard();
 
-            // AUTOMATION: Silently fetch latest cloud updates on initialization
-            if (hasUrlSetting) {
-                setTimeout(() => {
-                    pullFromSheet(true);
-                }, 500);
+            if (localStorage.getItem('marketing_hub_gas_url')) {
+                setTimeout(() => { pullFromSheet(true); }, 500);
             }
 
-            // This is the "Automated Heartbeat"
-            // It will check the server for updates every 10 seconds automatically
+            // Continuous background sync heartbeat loop
             setInterval(() => {
-                if (isAutoSyncActive()) {
-                    pullFromSheet(true); // 'true' means silent (no toast popups)
-                }
+                if (isAutoSyncActive()) { pullFromSheet(true); }
             }, 10000); 
         });
 
-        // 12-Hour Archiver Engine
         function runAutomatedArchiver() {
             const now = Date.now();
-            const twelveHours = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
+            const twelveHours = 12 * 60 * 60 * 1000;
             let madeArchiveChanges = false;
 
             tasks = tasks.filter(task => {
                 if (task.stage === 'done' && task.donetimestamp) {
-                    const doneTime = parseInt(task.donetimestamp);
-                    if (now - doneTime >= twelveHours) {
-                        archivedTasks.push({
-                            ...task,
-                            archivedAt: now
-                        });
+                    if (now - parseInt(task.donetimestamp) >= twelveHours) {
+                        archivedTasks.push({ ...task, archivedAt: now });
+                        if (!deletedTaskIds.includes(String(task.id))) deletedTaskIds.push(String(task.id));
                         madeArchiveChanges = true;
-                        return false; // Remove from active board
+                        return false;
                     }
                 }
                 return true;
@@ -480,17 +413,14 @@
             if (madeArchiveChanges) {
                 localStorage.setItem('marketing_tasks_backup_v3', JSON.stringify(tasks));
                 localStorage.setItem('marketing_tasks_archive_v3', JSON.stringify(archivedTasks));
-                showToast("📦 Tasks in Done longer than 12 hours archived successfully", "📦");
-                if (isAutoSyncActive()) {
-                    pushToSheet(true); // Silent push background sync
-                }
+                localStorage.setItem('marketing_tasks_deleted_log', JSON.stringify(deletedTaskIds));
+                showToast("📦 Archived old completed tasks", "📦");
+                if (isAutoSyncActive()) { pushToSheet(true); }
             }
         }
 
-        // Custom Security Lock controllers
         function toggleManagerLock() {
             if (isManagerUnlocked) {
-                // Lock instantly
                 isManagerUnlocked = false;
                 document.getElementById('manager-lock-icon').innerText = "🔒";
                 document.getElementById('manager-lock-text').innerText = "Staff Mode";
@@ -501,7 +431,6 @@
                 showToast("🔒 Secure Staff Mode active", "🔒");
                 renderBoard();
             } else {
-                // Open auth verification window
                 openManagerAuth();
             }
         }
@@ -511,10 +440,6 @@
             document.getElementById('managerAuthModal').classList.remove('hidden');
             document.getElementById('managerAuthModal').classList.add('flex');
             document.getElementById('managerPinInput').focus();
-            
-            return new Promise((resolve) => {
-                authPromiseResolver = resolve;
-            });
         }
 
         function closeManagerAuth(success) {
@@ -529,33 +454,21 @@
                     document.getElementById('manager-lock-text').innerText = "Manager Mode";
                     document.getElementById('board-role-badge').innerText = "Manager Mode: Full control active";
                     document.getElementById('done-lock-overlay').classList.add('opacity-0');
-                    setTimeout(() => {
-                        document.getElementById('done-lock-overlay').classList.remove('flex');
-                    }, 200);
+                    setTimeout(() => { document.getElementById('done-lock-overlay').classList.remove('flex'); }, 200);
                     document.getElementById('stage-done-option').disabled = false;
                     showToast("🔓 Manager privileges granted!", "🔑");
                     renderBoard();
                 } else {
-                    showToast("❌ Incorrect passcode configuration", "🚫");
+                    showToast("❌ Incorrect passcode", "🚫");
                 }
             }
         }
 
-        // Charts configuration
         function initCharts() {
             const ctxWorkload = document.getElementById('workloadChart').getContext('2d');
             workloadChart = new Chart(ctxWorkload, {
                 type: 'bar',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Tasks Count (Active Only)',
-                        data: [],
-                        backgroundColor: '#6366f1',
-                        borderRadius: 6,
-                        maxBarThickness: 32
-                    }]
-                },
+                data: { labels: [], datasets: [{ label: 'Tasks', data: [], backgroundColor: '#6366f1', borderRadius: 6, maxBarThickness: 32 }] },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -570,30 +483,11 @@
             const ctxPipeline = document.getElementById('pipelineChart').getContext('2d');
             pipelineChart = new Chart(ctxPipeline, {
                 type: 'doughnut',
-                data: {
-                    labels: ['Backlog', 'Up Next', 'In Progress', 'Review', 'Done'],
-                    datasets: [{
-                        data: [],
-                        backgroundColor: ['#64748b', '#3b82f6', '#6366f1', '#f59e0b', '#10b981'],
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '72%',
-                    plugins: {
-                        legend: {
-                            position: 'right',
-                            labels: { boxWidth: 8, font: { size: 10 } }
-                        }
-                    }
-                }
+                data: { labels: ['Backlog', 'Up Next', 'In Progress', 'Review', 'Done'], datasets: [{ data: [], backgroundColor: ['#64748b', '#3b82f6', '#6366f1', '#f59e0b', '#10b981'], borderWidth: 2, borderColor: '#ffffff' }] },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '72%', plugins: { legend: { position: 'right', labels: { boxWidth: 8, font: { size: 10 } } } } }
             });
         }
 
-        // Core Renderer
         function renderBoard() {
             const filterValue = document.getElementById('memberFilter').value;
             const columns = ['backlog', 'upnext', 'inprogress', 'review', 'done'];
@@ -608,7 +502,6 @@
                 filtered.forEach(task => {
                     const card = document.createElement('div');
                     card.className = "bg-white p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:shadow-md transition duration-150 cursor-grab active:cursor-grabbing relative group shadow-sm animate-in fade-in zoom-in-95 duration-150";
-                    
                     card.draggable = true;
                     card.id = `task-${task.id}`;
                     card.ondragstart = drag;
@@ -617,38 +510,25 @@
                     const badgeTheme = BADGE_THEMES[task.channel] || 'bg-slate-50 border-slate-200 text-slate-600 border';
                     const priorityDot = task.priority === 'high' ? 'bg-red-500' : task.priority === 'medium' ? 'bg-amber-400' : 'bg-emerald-400';
 
-                    // Formulate Channel Label Tag based on nested setup
                     let displayChannel = task.channel;
-                    if (task.subChannel) {
-                        if (task.subChannel === 'WhatsApp' && task.whatsAppType) {
-                            displayChannel += ` > ${task.whatsAppType}`;
-                        } else {
-                            displayChannel += ` > ${task.subChannel}`;
-                        }
-                    }
+                    if (task.subChannel) displayChannel += task.subChannel === 'WhatsApp' && task.whatsAppType ? ` > ${task.whatsAppType}` : ` > ${task.subChannel}`;
 
                     card.innerHTML = `
                         <div class="space-y-3">
                             <div class="flex items-center justify-between">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-semibold tracking-wider truncate max-w-[130px] ${badgeTheme}" title="${displayChannel}">${displayChannel}</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-semibold tracking-wider truncate max-w-[130px] ${badgeTheme}">${displayChannel}</span>
                                 <div class="flex items-center gap-1.5 shrink-0">
                                     <span class="w-2 h-2 rounded-full ${priorityDot}"></span>
                                     <span class="text-[9px] font-bold uppercase text-slate-400">${task.priority}</span>
                                 </div>
                             </div>
-                            
                             <h4 class="text-xs font-bold text-slate-900 leading-snug group-hover:text-indigo-600 transition duration-150">${task.title}</h4>
-                            
                             <div class="flex items-center justify-between pt-2 border-t border-slate-100">
                                 <div class="flex items-center gap-1.5 min-w-0">
-                                    <div class="w-5 h-5 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-[10px] text-slate-600 shrink-0">
-                                        ${task.assignee.charAt(0)}
-                                    </div>
+                                    <div class="w-5 h-5 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-[10px] text-slate-600 shrink-0">${task.assignee.charAt(0)}</div>
                                     <span class="text-[11px] font-medium text-slate-500 truncate">${task.assignee}</span>
                                 </div>
-                                <button onclick="triggerDelete(event, '${task.id}')" class="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-red-500 rounded transition duration-150 shrink-0">
-                                    🗑️
-                                </button>
+                                <button onclick="triggerDelete(event, '${task.id}')" class="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-red-500 rounded transition duration-150 shrink-0">🗑️</button>
                             </div>
                         </div>
                     `;
@@ -656,73 +536,54 @@
                 });
             });
 
-            // Auto lock graphic check
             if (!isManagerUnlocked) {
                 document.getElementById('done-lock-overlay').classList.remove('hidden');
                 document.getElementById('done-lock-overlay').classList.remove('opacity-0');
                 document.getElementById('done-lock-overlay').classList.add('flex');
             }
 
-            // Sync with memory
             localStorage.setItem('marketing_tasks_backup_v3', JSON.stringify(tasks));
             updateCharts();
         }
 
         function updateCharts() {
             if (!workloadChart || !pipelineChart) return;
-
-            const members = ['Riya Mishra', 'Anchal Sharma', 'Ankit Kumar', 'Ritu Chola', 'Tushar Kumar', 'Vivek Vishal'];
             const workloads = { 'Riya Mishra': 0, 'Anchal Sharma': 0, 'Ankit Kumar': 0, 'Ritu Chola': 0, 'Tushar Kumar': 0, 'Vivek Vishal': 0 };
 
-            tasks.forEach(t => {
-                if (t.stage !== 'done' && workloads.hasOwnProperty(t.assignee)) {
-                    workloads[t.assignee]++;
-                }
-            });
-
+            tasks.forEach(t => { if (t.stage !== 'done' && workloads.hasOwnProperty(t.assignee)) workloads[t.assignee]++; });
             workloadChart.data.labels = Object.keys(workloads).map(name => name.split(' ')[0]);
             workloadChart.data.datasets[0].data = Object.values(workloads);
             workloadChart.update();
 
             const pipeline = { backlog: 0, upnext: 0, inprogress: 0, review: 0, done: 0 };
-            tasks.forEach(t => {
-                if (pipeline.hasOwnProperty(t.stage)) {
-                    pipeline[t.stage]++;
-                }
-            });
-
+            tasks.forEach(t => { if (pipeline.hasOwnProperty(t.stage)) pipeline[t.stage]++; });
             pipelineChart.data.datasets[0].data = Object.values(pipeline);
             pipelineChart.update();
         }
 
         function allowDrop(e) { e.preventDefault(); }
-        
-        // BUG FIX: Changed e.target.id to e.currentTarget.id so dragging structural inner text nodes inside a card doesn't break drag actions
         function drag(e) { e.dataTransfer.setData("text", e.currentTarget.id); }
-        
         function dragEnter(e) { e.currentTarget.classList.add('drag-over'); }
         function dragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
         
         function drop(e, targetStage) {
             e.preventDefault();
-            const col = e.currentTarget;
-            col.classList.remove('drag-over');
+            e.currentTarget.classList.remove('drag-over');
 
             if (targetStage === 'done' && !isManagerUnlocked) {
-                showToast("🚫 Staff Mode Lock active. Manager verification required.", "🔒");
+                showToast("🚫 Manager verification required for Done stage.", "🔒");
                 return;
             }
             
-            // Simplifed and hardened ID extraction
             let rawId = e.dataTransfer.getData("text");
-            if (!rawId) return; // Prevent empty drops
+            if (!rawId) return; 
             
             const taskId = rawId.replace('task-', '');
             const targetTask = tasks.find(t => String(t.id) === String(taskId));
             
             if (targetTask) {
                 if (targetTask.stage === 'done' && targetStage !== 'done' && !isManagerUnlocked) {
-                    showToast("🚫 Only Managers can pull a task back out of Done", "🔒");
+                    showToast("🚫 Managers only adjustment lock.", "🔒");
                     return;
                 }
 
@@ -731,64 +592,36 @@
                 targetTask.donetimestamp = (targetStage === 'done') ? Date.now().toString() : "";
 
                 renderBoard();
-                showToast(`⚡ Task stage updated to ${targetStage}`);
-                
-                if (isAutoSyncActive()) {
-                    pushToSheet(true);
-                }
+                if (isAutoSyncActive()) { pushToSheet(true); }
             }
         }
 
-        // Settings / Custom Modal Controllers
         function handleChannelSelectionChange() {
             const channel = document.getElementById('taskChannel').value;
-            const customWrapper = document.getElementById('customChannelWrapper');
-            const subChannelWrapper = document.getElementById('subChannelWrapper');
-            const whatsAppTypeWrapper = document.getElementById('whatsAppTypeWrapper');
-
-            // Reset visibilities
-            customWrapper.classList.add('hidden');
-            subChannelWrapper.classList.add('hidden');
-            whatsAppTypeWrapper.classList.add('hidden');
-
-            document.getElementById('customChannelInput').required = false;
-            document.getElementById('taskSubChannel').required = false;
-            document.getElementById('taskWhatsAppType').required = false;
+            document.getElementById('customChannelWrapper').classList.add('hidden');
+            document.getElementById('subChannelWrapper').classList.add('hidden');
+            document.getElementById('whatsAppTypeWrapper').classList.add('hidden');
 
             if (channel === 'Other') {
-                customWrapper.classList.remove('hidden');
-                document.getElementById('customChannelInput').required = true;
+                document.getElementById('customChannelWrapper').classList.remove('hidden');
             } else if (channel === 'Campaigns' || channel === 'Content Writing') {
-                subChannelWrapper.classList.remove('hidden');
-                document.getElementById('taskSubChannel').required = true;
+                document.getElementById('subChannelWrapper').classList.remove('hidden');
                 handleSubChannelSelectionChange();
             }
         }
 
         function handleSubChannelSelectionChange() {
             const subChannel = document.getElementById('taskSubChannel').value;
-            const whatsAppTypeWrapper = document.getElementById('whatsAppTypeWrapper');
-
-            if (subChannel === 'WhatsApp') {
-                whatsAppTypeWrapper.classList.remove('hidden');
-                document.getElementById('taskWhatsAppType').required = true;
-            } else {
-                whatsAppTypeWrapper.classList.add('hidden');
-                document.getElementById('taskWhatsAppType').required = false;
-            }
+            document.getElementById('whatsAppTypeWrapper').classList.add('hidden');
+            if (subChannel === 'WhatsApp') document.getElementById('whatsAppTypeWrapper').classList.remove('hidden');
         }
 
         function openTaskModal() {
             document.getElementById('modalTitle').innerText = "Create New Task";
             document.getElementById('taskForm').reset();
             document.getElementById('taskId').value = '';
-            
-            // Re-trigger hidden states resets
             handleChannelSelectionChange();
-
-            // Limit Done selection option unless unlocked
             document.getElementById('stage-done-option').disabled = !isManagerUnlocked;
-
             document.getElementById('taskModal').classList.remove('hidden');
             document.getElementById('taskModal').classList.add('flex');
         }
@@ -796,12 +629,7 @@
         function openEditTask(id) {
             const task = tasks.find(t => String(t.id) === String(id));
             if (!task) return;
-
-            // Restrict done editing access
-            if (task.stage === 'done' && !isManagerUnlocked) {
-                showToast("🔒 Tasks in Done stage are locked and require Manager Mode to edit details.", "🔒");
-                return;
-            }
+            if (task.stage === 'done' && !isManagerUnlocked) return;
 
             document.getElementById('modalTitle').innerText = "Edit Task Details";
             document.getElementById('taskId').value = task.id;
@@ -809,22 +637,13 @@
             document.getElementById('taskAssignee').value = task.assignee;
             
             const defaultChannels = ["Social Media", "Graphic Design", "Content Writing", "Campaigns", "SEO"];
-            if (defaultChannels.includes(task.channel)) {
-                document.getElementById('taskChannel').value = task.channel;
-            } else {
-                document.getElementById('taskChannel').value = "Other";
-            }
-
-            // Sync dynamic wrappers values
+            document.getElementById('taskChannel').value = defaultChannels.includes(task.channel) ? task.channel : "Other";
             handleChannelSelectionChange();
 
             if (task.channel === 'Campaigns' || task.channel === 'Content Writing') {
                 document.getElementById('taskSubChannel').value = task.subChannel || "";
                 handleSubChannelSelectionChange();
-                
-                if (task.subChannel === 'WhatsApp') {
-                    document.getElementById('taskWhatsAppType').value = task.whatsAppType || "WhatsApp Utility";
-                }
+                if (task.subChannel === 'WhatsApp') document.getElementById('taskWhatsAppType').value = task.whatsAppType || "WhatsApp Utility";
             } else if (document.getElementById('taskChannel').value === 'Other') {
                 document.getElementById('customChannelInput').value = task.channel;
             }
@@ -847,7 +666,6 @@
             const id = document.getElementById('taskId').value;
             const title = document.getElementById('taskTitle').value;
             const assignee = document.getElementById('taskAssignee').value;
-            
             let channel = document.getElementById('taskChannel').value;
             let subChannel = "";
             let whatsAppType = "";
@@ -856,75 +674,38 @@
                 channel = document.getElementById('customChannelInput').value.trim() || 'Other';
             } else if (channel === 'Campaigns' || channel === 'Content Writing') {
                 subChannel = document.getElementById('taskSubChannel').value;
-                if (subChannel === 'WhatsApp') {
-                    whatsAppType = document.getElementById('taskWhatsAppType').value;
-                }
+                if (subChannel === 'WhatsApp') whatsAppType = document.getElementById('taskWhatsAppType').value;
             }
 
             const priority = document.getElementById('taskPriority').value;
             const stage = document.getElementById('taskStage').value;
 
-            if (stage === 'done' && !isManagerUnlocked) {
-                showToast("🚫 Only Managers can push tasks to Done stage.", "🔒");
-                return;
-            }
-
             if (id) {
-                // Editing existing
                 const idx = tasks.findIndex(t => String(t.id) === String(id));
                 if (idx !== -1) {
-                    const originalStage = tasks[idx].stage;
-                    const doneStamp = (stage === 'done') ? (originalStage === 'done' ? tasks[idx].donetimestamp : Date.now().toString()) : "";
-
-                    tasks[idx] = { 
-                        id, title, assignee, channel, subChannel, whatsAppType, priority, stage, 
-                        lastmodified: Date.now().toString(),
-                        donetimestamp: doneStamp 
-                    };
-                    showToast("✏️ Task updated successfully");
+                    tasks[idx] = { id, title, assignee, channel, subChannel, whatsAppType, priority, stage, lastmodified: Date.now().toString(), donetimestamp: (stage==='done') ? Date.now().toString() : "" };
                 }
             } else {
-                // Creating new
-                const newTask = {
-                    id: Date.now().toString(),
-                    title, assignee, channel, subChannel, whatsAppType, priority, stage,
-                    lastmodified: Date.now().toString(),
-                    donetimestamp: (stage === 'done') ? Date.now().toString() : ""
-                };
-                tasks.push(newTask);
-                showToast("🎉 New task created");
+                tasks.push({ id: Date.now().toString(), title, assignee, channel, subChannel, whatsAppType, priority, stage, lastmodified: Date.now().toString(), donetimestamp: (stage==='done') ? Date.now().toString() : "" });
             }
 
             closeTaskModal();
-            runAutomatedArchiver(); // Run check in case newly set task immediately fulfills archive limits
             renderBoard();
-            
-            if (isAutoSyncActive()) {
-                pushToSheet(true);
-            }
+            if (isAutoSyncActive()) { pushToSheet(true); }
         }
 
-        // Custom Delete & Confirm Modal logic
         function triggerDelete(e, id) {
             e.stopPropagation();
             showConfirmModal("Confirm Deletion", "Are you sure you want to permanently delete this task?")
                 .then(confirmed => {
                     if (confirmed) {
-                        // Remove from local array
                         tasks = tasks.filter(t => String(t.id) !== String(id));
-                        
-                        // Log deletion to prevent cloud ghosting on the next polling cycle
-                        if (!deletedTaskIds.includes(id.toString())) {
-                            deletedTaskIds.push(id.toString());
+                        if (!deletedTaskIds.includes(String(id))) {
+                            deletedTaskIds.push(String(id));
                             localStorage.setItem('marketing_tasks_deleted_log', JSON.stringify(deletedTaskIds));
                         }
-                        
                         renderBoard();
-                        showToast("🗑️ Task has been deleted");
-                        
-                        if (isAutoSyncActive()) {
-                            pushToSheet(true);
-                        }
+                        if (isAutoSyncActive()) { pushToSheet(false); }
                     }
                 });
         }
@@ -934,10 +715,7 @@
             document.getElementById('confirmText').innerText = text;
             document.getElementById('customConfirmModal').classList.remove('hidden');
             document.getElementById('customConfirmModal').classList.add('flex');
-            
-            return new Promise((resolve) => {
-                confirmPromiseResolver = resolve;
-            });
+            return new Promise((resolve) => { confirmPromiseResolver = resolve; });
         }
 
         function closeConfirmModal(outcome) {
@@ -946,22 +724,18 @@
             if (confirmPromiseResolver) { confirmPromiseResolver(outcome); }
         }
 
-        // Toast Engine
         function showToast(message, icon = "✅") {
             const toast = document.getElementById('toastNotification');
             document.getElementById('toastMessage').innerText = message;
             document.getElementById('toastIcon').innerText = icon;
-
             toast.classList.remove('translate-y-20', 'opacity-0');
             toast.classList.add('translate-y-0', 'opacity-100');
-
             setTimeout(() => {
                 toast.classList.add('translate-y-20', 'opacity-0');
                 toast.classList.remove('translate-y-0', 'opacity-100');
             }, 3000);
         }
 
-        // Archive Modal Actions
         function openArchiveModal() {
             renderArchiveList();
             document.getElementById('archiveInventoryModal').classList.remove('hidden');
@@ -976,44 +750,16 @@
         function renderArchiveList() {
             const container = document.getElementById('archiveListContainer');
             container.innerHTML = "";
-
             if (archivedTasks.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-12 text-slate-400">
-                        <span class="text-3xl block">📦</span>
-                        <p class="text-xs font-semibold mt-2">Archive database is currently empty.</p>
-                        <p class="text-[10px] mt-1">Completed items that have reached the 12-hour limit will populate here.</p>
-                    </div>
-                `;
+                container.innerHTML = `<div class="text-center py-12 text-slate-400"><p class="text-xs font-semibold">Archive database empty.</p></div>`;
                 return;
             }
-
             archivedTasks.forEach((task, idx) => {
                 const archiveCard = document.createElement('div');
-                archiveCard.className = "p-4 rounded-xl border border-slate-200 bg-slate-50 flex justify-between items-center animate-in fade-in zoom-in-95 duration-150";
-                
-                const archiveDateStr = task.archivedAt ? new Date(task.archivedAt).toLocaleString() : 'N/A';
-
-                let displayChan = task.channel;
-                if (task.subChannel) {
-                    displayChan += ` > ${task.subChannel}`;
-                    if (task.whatsAppType) displayChan += ` (${task.whatsAppType})`;
-                }
-
+                archiveCard.className = "p-4 rounded-xl border border-slate-200 bg-slate-50 flex justify-between items-center";
                 archiveCard.innerHTML = `
-                    <div class="space-y-1">
-                        <div class="flex items-center gap-2">
-                            <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-slate-200 text-slate-600">${displayChan}</span>
-                            <span class="text-[9px] text-slate-400 font-semibold">Archived: ${archiveDateStr}</span>
-                        </div>
-                        <h4 class="text-xs font-bold text-slate-800">${task.title}</h4>
-                        <p class="text-[10px] text-slate-500">Assignee: ${task.assignee} | Priority: ${task.priority}</p>
-                    </div>
-                    <div>
-                        <button onclick="restoreFromArchive(${idx})" class="text-[11px] font-semibold text-indigo-600 bg-white hover:bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-lg transition">
-                            Restore to Board
-                        </button>
-                    </div>
+                    <div><h4 class="text-xs font-bold text-slate-800">${task.title}</h4><p class="text-[10px] text-slate-500">${task.assignee}</p></div>
+                    <button onclick="restoreFromArchive(${idx})" class="text-[11px] font-semibold text-indigo-600 bg-white border border-indigo-200 px-3 py-1.5 rounded-lg">Restore</button>
                 `;
                 container.appendChild(archiveCard);
             });
@@ -1021,50 +767,26 @@
 
         function restoreFromArchive(idx) {
             const restoredTask = archivedTasks[idx];
-            
-            // Set restored stage back to Review so manager must confirm complete or move it elsewhere
             restoredTask.stage = "review";
             restoredTask.donetimestamp = "";
             restoredTask.lastmodified = Date.now().toString();
-
-            // Insert back to active array
             tasks.push(restoredTask);
             archivedTasks.splice(idx, 1);
-
             localStorage.setItem('marketing_tasks_backup_v3', JSON.stringify(tasks));
             localStorage.setItem('marketing_tasks_archive_v3', JSON.stringify(archivedTasks));
-
             renderBoard();
-            renderArchiveList();
-            showToast("📦 Task successfully restored back to board", "⚡");
-
-            if (isAutoSyncActive()) {
-                pushToSheet(true);
-            }
+            closeArchiveModal();
+            if (isAutoSyncActive()) { pushToSheet(true); }
         }
 
         function openSyncModal() {
-            const savedUrl = localStorage.getItem('marketing_hub_gas_url') || '';
-            document.getElementById('sheetUrlInput').value = savedUrl;
-            
-            // Build Passcode settings input based on current authorization role
+            document.getElementById('sheetUrlInput').value = localStorage.getItem('marketing_hub_gas_url') || '';
             const passcodeContainer = document.getElementById('passcode-config-wrapper');
             if (isManagerUnlocked) {
-                passcodeContainer.innerHTML = `
-                    <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">🔑 Manager Security Passcode</label>
-                    <input type="password" id="managerPinConfig" value="${managerPin}" placeholder="Enter new numerical PIN" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-indigo-500 transition">
-                    <p class="text-[10px] text-slate-400 mt-1">Authorized. Type a new passcode to update.</p>
-                `;
+                passcodeContainer.innerHTML = `<label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">🔑 Reset Manager Passcode</label><input type="password" id="managerPinConfig" value="${managerPin}" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none">`;
             } else {
-                passcodeContainer.innerHTML = `
-                    <div class="flex items-center gap-2 text-amber-700">
-                        <span class="text-sm">🔒</span>
-                        <span class="text-xs font-semibold">Security Settings Locked</span>
-                    </div>
-                    <p class="text-[10px] text-amber-600 mt-1">Passcode configurations are hidden. You must unlock <strong>Manager Mode</strong> from the main toolbar to alter security PINs.</p>
-                `;
+                passcodeContainer.innerHTML = `<p class="text-[10px] text-amber-600">Unlock Manager Mode to change PIN configurations.</p>`;
             }
-
             document.getElementById('syncSettingsModal').classList.remove('hidden');
             document.getElementById('syncSettingsModal').classList.add('flex');
         }
@@ -1074,9 +796,7 @@
             document.getElementById('syncSettingsModal').classList.remove('flex');
         }
 
-        function isAutoSyncActive() {
-            return localStorage.getItem('marketing_hub_autosync') === 'true';
-        }
+        function isAutoSyncActive() { return localStorage.getItem('marketing_hub_autosync') === 'true'; }
 
         function saveSyncSettings() {
             const url = document.getElementById('sheetUrlInput').value.trim();
@@ -1086,123 +806,74 @@
                 localStorage.setItem('marketing_hub_gas_url', url);
                 localStorage.setItem('marketing_hub_autosync', isAutoSync ? 'true' : 'false');
                 checkConnectionStatus();
-                showToast("⚙️ Sync configurations saved!");
-                pullFromSheet(true); // Initial fetch trigger
-            } else {
-                localStorage.removeItem('marketing_hub_gas_url');
-                localStorage.removeItem('marketing_hub_autosync');
-                checkConnectionStatus();
-                showToast("⚠️ Sync configurations cleared", "ℹ️");
+                pullFromSheet(true);
             }
-
-            // Save new Passcode configuration ONLY if Manager is unlocked and input is loaded
-            const configPinInput = document.getElementById('managerPinConfig');
-            if (isManagerUnlocked && configPinInput) {
-                const configPin = configPinInput.value.trim();
-                if (configPin) {
-                    managerPin = configPin;
-                    localStorage.setItem('marketing_hub_manager_pin', configPin);
-                }
+            if (isManagerUnlocked && document.getElementById('managerPinConfig')) {
+                managerPin = document.getElementById('managerPinConfig').value.trim() || managerPin;
+                localStorage.setItem('marketing_hub_manager_pin', managerPin);
             }
-
             closeSyncModal();
         }
 
         function checkConnectionStatus() {
             const url = localStorage.getItem('marketing_hub_gas_url');
-            const dot = document.getElementById('sync-indicator-dot');
-            const text = document.getElementById('sync-status-text');
-
-            if (url) {
-                dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 block animate-pulse";
-                text.innerText = isAutoSyncActive() ? "Live Connected" : "Cloud Ready";
-            } else {
-                dot.className = "w-2.5 h-2.5 rounded-full bg-amber-400 block";
-                text.innerText = "Local-Only Cache";
-            }
+            document.getElementById('sync-indicator-dot').className = url ? "w-2.5 h-2.5 rounded-full bg-emerald-500 block animate-pulse" : "w-2.5 h-2.5 rounded-full bg-amber-400 block";
+            document.getElementById('sync-status-text').innerText = url ? (isAutoSyncActive() ? "Live Connected" : "Cloud Ready") : "Local-Only Cache";
         }
 
-        // Updated Direct Pull Method 
+        // UPGRADED MULTI-USER SAFE PULL MERGE
         function pullFromSheet(isSilent = false) {
             const url = localStorage.getItem('marketing_hub_gas_url');
             if (!url) return;
 
-            if (!isSilent) showToast("🔄 Fetching latest updates...", "⏳");
-
-            const fetchUrl = url.includes("?") ? url + "&t=" + Date.now() : url + "?t=" + Date.now();
-
-            fetch(fetchUrl)
+            fetch(url.includes("?") ? url + "&t=" + Date.now() : url + "?t=" + Date.now())
                 .then(response => response.json())
-                .then(data => {
-                    const cloudTasks = Array.isArray(data) ? data : (data.tasks || []);
-                    
-                    // 1. Fetch our local deletion logs
-                    const logStr = localStorage.getItem('marketing_tasks_deleted_log') || '[]';
-                    let deletedIds = [];
-                    try { deletedIds = JSON.parse(logStr); } catch(e) {}
+                .then(cloudTasks => {
+                    if (!Array.isArray(cloudTasks)) return;
 
-                    // 2. Map local state to protect our recent changes
                     const mergedMap = new Map();
                     tasks.forEach(t => mergedMap.set(String(t.id), t));
 
-                    // 3. Smart Merge Timestamp Engine
                     cloudTasks.forEach(ct => {
-                        // BUG FIX: Convert ct.id directly to String to prevent type mismatch duplication (e.g. 1001 !== "1001")
                         const cloudIdStr = String(ct.id);
 
-                        // If we deleted this locally, completely ignore the cloud version
-                        if (deletedIds.includes(cloudIdStr)) return;
+                        // If any team member has deleted it globally, drop it from local tracking
+                        if (deletedTaskIds.includes(cloudIdStr)) {
+                            mergedMap.delete(cloudIdStr);
+                            return;
+                        }
 
                         if (!mergedMap.has(cloudIdStr)) {
-                            // New task from a teammate, add it
                             mergedMap.set(cloudIdStr, ct);
                         } else {
-                            // Conflict! Check which one is newer based on UNIX timestamp
                             const localTime = parseInt(mergedMap.get(cloudIdStr).lastmodified) || 0;
                             const cloudTime = parseInt(ct.lastmodified) || 0;
-                            
-                            if (cloudTime > localTime) {
-                                mergedMap.set(cloudIdStr, ct); // Cloud is newer, overwrite local
-                            }
+                            if (cloudTime > localTime) mergedMap.set(cloudIdStr, ct);
                         }
                     });
 
                     tasks = Array.from(mergedMap.values());
-                    renderBoard(); 
-                    
-                    if (!isSilent) showToast("Synced with cloud!", "✅");
+                    renderBoard();
                 })
-                .catch(err => {
-                    console.error("Sync pull failed", err);
-                    if (!isSilent) showToast("Sync bridge connection failure.", "❌");
-                });
+                .catch(err => console.error("Sync merge failure", err));
         }
 
-        // Syncing state out
+        // UPGRADED DIRECT FORWARD CLEARANCE PUSH
         function pushToSheet(isSilent = false) {
             const url = localStorage.getItem('marketing_hub_gas_url');
-            if (!url) {
-                if (!isSilent) {
-                    showToast("Configure your Google Sheet URL first!", "⚠️");
-                    openSyncModal();
-                }
-                return;
-            }
-
-            if (!isSilent) { showToast("📤 Synchronizing to cloud...", "⏳"); }
+            if (!url) return;
 
             fetch(url, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ tasks: tasks })
+                body: JSON.stringify({ tasks: tasks, deletedIds: deletedTaskIds })
             })
             .then(() => {
-                if (!isSilent) { showToast("☁️ Cloud updated in lockstep!", "✅"); }
-            })
-            .catch(err => {
-                console.error(err);
-                if (!isSilent) { showToast("Cloud push failed.", "❌"); }
+                // Clear deletion records locally once successfully dispatched to the spreadsheet
+                deletedTaskIds = [];
+                localStorage.setItem('marketing_tasks_deleted_log', '[]');
+                if (!isSilent) showToast("Synced successfully!");
             });
         }
     </script>
